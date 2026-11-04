@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University of Juba - V4 - Firebase Auto Admission</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif} body{background:#F2F4F7;color:#0B2C4A}
+:root{--blue:#0B2C4A;--gold:#D4A017}
+header{background:var(--blue);color:#fff;padding:12px;border-bottom:4px solid var(--gold);position:sticky;top:0;z-index:10}
+.wrap{max-width:1080px;margin:auto;padding:12px}
+.flex{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}
+.btn{border:none;cursor:pointer;padding:10px 16px;border-radius:999px;font-weight:800;font-size:13px}
+.btn-gold{background:var(--gold);color:#000}.btn-dark{background:var(--blue);color:#fff}.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)}
+.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.06);border-top:4px solid var(--gold);margin-bottom:12px}
+input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:12px;outline:none}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.docBox{border:2px dashed #D4A017;border-radius:14px;padding:12px;text-align:center;background:#FFFBEB}
+.docBox img{max-width:100%;max-height:120px;border-radius:10px}
+.pctBox{background:var(--blue);color:#fff;border-radius:12px;padding:12px;display:flex;justify-content:space-between}
+.pctBox b{color:var(--gold);font-size:26px}
+table{width:100%;border-collapse:collapse;font-size:13px} th{text-align:left;color:#888;font-size:11px;padding:8px} td{padding:10px 8px;border-top:1px solid #eee}
+.hidden{display:none}
+.badge{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.wishOk{border-color:#16a34a!important;background:#f0fdf4!important}
+.wishNo{border-color:#dc2626!important;background:#fef2f2!important}
+.live{width:10px;height:10px;background:#16a34a;border-radius:50%;display:inline-block;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.3}}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+@media print{ body *{visibility:hidden} #printArea, #printArea *{visibility:visible} #printArea{position:absolute;left:0;top:0;width:100%} }
+</style>
+</head>
+<body>
+<header><div class="wrap flex between"><div class="flex"><span id="logoHeader"></span><div><h1>University of Juba</h1><p style="color:var(--gold);font-size:11px;font-weight:800">V4 • FIREBASE • AUTO ADMISSION • EST. 1975</p><p id="whoami" style="font-size:11px;opacity:.7"></p></div></div><div class="flex" id="navBtns"></div></div></header>
+
+<div class="wrap">
+<!-- LOGIN -->
+<div id="page-login" class="card" style="max-width:420px;margin:30px auto;text-align:center"><span id="logoLogin"></span><h2>Login with Token</h2><p style="font-size:12px;color:#666;margin:8px 0">Staff Token or Student Token</p><p style="font-size:11px;color:#16a34a"><span class="live"></span> <span id="fbStatus">Connecting to Firebase...</span></p><input id="loginToken" placeholder="ENTER TOKEN" style="text-align:center;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin-top:12px"><p id="loginError" style="color:red;font-size:12px"></p><button class="btn btn-dark" style="width:100%;margin-top:10px;padding:13px" onclick="doLogin()">Login →</button><button class="btn" style="width:100%;margin-top:8px;background:#fff;border:2px solid var(--blue)" onclick="goApply()">New Application - No Token →</button></div>
+
+<!-- APPLY -->
+<div id="page-apply" class="hidden">
+<div class="card" style="display:flex;flex-direction:column;gap:12px">
+<div class="flex between"><h2>Application Form - 2026/2027 - Choose 4 Colleges</h2><span class="badge" style="background:#FEF3C7">FIREBASE LIVE</span></div>
+<div class="grid2">
+<input id="fName" placeholder="Full Name (As in Certificate) *" style="grid-column:span 2">
+<input id="fIndex" placeholder="Seat Number / Index Number *"><input id="fNational" placeholder="National ID *">
+<input id="fPhone" placeholder="Phone / WhatsApp *"><select id="fGender"><option value="">Gender *</option><option>Male</option><option>Female</option></select>
+<select id="fState"><option value="">State *</option><option>Central Equatoria</option><option>Eastern Equatoria</option><option>Western Equatoria</option><option>Jonglei</option><option>Unity</option><option>Upper Nile</option><option>Lakes</option><option>Warrap</option><option>Northern Bahr El Ghazal</option><option>Western Bahr El Ghazal</option><option>Abyei</option><option>Pibor</option><option>Ruweng</option></select>
+<input id="fSchool" placeholder="Secondary School *"><input id="fYear" type="number" value="2026">
+<select id="fType"><option>South Sudanese</option><option>Foreign - Sudan</option><option>Foreign - Uganda</option><option>Foreign - Kenya</option><option>Foreign - Ethiopia</option><option>Foreign - Other</option></select><select id="fProgram"><option>Bachelor Degree</option><option>Diploma</option><option>Masters</option><option>PhD</option></select>
+</div>
+<label style="font-size:13px"><input type="checkbox" id="fScholarship" style="width:auto"> Apply for Scholarship</label>
+<h3>Documents</h3><div class="grid2">
+<div class="docBox"><b>1. Certificate *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Upload<input type="file" accept="image/*" onchange="uploadFile(event,'cert')" style="display:none"></label><img id="img-cert" class="hidden"><p id="st-cert" style="font-size:11px"></p></div>
+<div class="docBox"><b>2. National ID *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Upload<input type="file" accept="image/*" onchange="uploadFile(event,'nid')" style="display:none"></label><img id="img-nid" class="hidden"><p id="st-nid" style="font-size:11px"></p></div>
+<div class="docBox"><b>3. Birth Certificate *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Upload<input type="file" accept="image/*" onchange="uploadFile(event,'birth')" style="display:none"></label><img id="img-birth" class="hidden"><p id="st-birth" style="font-size:11px"></p></div>
+<div class="docBox"><b>4. Passport Photo *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Upload<input type="file" accept="image/*" onchange="uploadFile(event,'photo')" style="display:none"></label><img id="img-photo" class="hidden"><p id="st-photo" style="font-size:11px"></p></div>
+</div>
+<h3>SSCSE Results - Marks out of 100</h3><div class="grid2" id="subjectsBox"></div>
+<div class="pctBox"><span>Your Percentage (Best 5 incl. English & Maths)</span><b id="calcPct">0%</b></div><p id="calcDetail" style="font-size:11px;color:#666"></p><p id="eligibilityBox" style="font-size:12px"></p>
+<h3>Choose 4 Wishes - System Will Filter By Your Grades</h3><p style="font-size:12px;color:#666">Green = You are eligible. Red = Your grades are below cut-off for this college. You can only choose eligible colleges.</p><div id="wishesBox" style="display:flex;flex-direction:column;gap:8px"></div>
+<h3>Payment - 50,000 SSP</h3><select id="fPay"><option>m-GURUSH</option><option>MTN MoMo</option><option>Bank Transfer</option><option>Cash at University</option></select><input id="fPayRef" placeholder="Payment Reference *">
+<button class="btn btn-dark" style="width:100%;padding:14px" onclick="submitApp()">Submit to Firebase →</button><p id="submitMsg" style="font-size:12px;text-align:center"></p>
+</div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="hidden">
+<div class="card"><div class="flex between"><h2>Dashboard - Live from Firebase</h2><span id="roleBadge" class="badge" style="background:#FEF3C7"></span></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px">
+<div style="background:#F8F9FA;border-radius:12px;padding:12px"><p style="font-size:11px;color:#888">Total Applications</p><p id="stTotal" style="font-size:22px;font-weight:900">0</p></div>
+<div style="background:#F0FDF4;border-radius:12px;padding:12px"><p style="font-size:11px;color:#888">Auto Accepted</p><p id="stAccepted" style="font-size:22px;font-weight:900;color:#16a34a">0</p></div>
+<div style="background:#FFFBEB;border-radius:12px;padding:12px"><p style="font-size:11px;color:#888">Waiting for Auto Admission</p><p id="stPending" style="font-size:22px;font-weight:900;color:#d97706">0</p></div>
+<div style="background:#EFF6FF;border-radius:12px;padding:12px"><p style="font-size:11px;color:#888">Seats Filled</p><p id="stSeats" style="font-size:18px;font-weight:900">-</p></div>
+</div>
+<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:12px;margin-top:12px"><b>⚙️ Auto Admission Control</b><p style="font-size:12px">Admission runs automatically based on percentage ranking + seats + subject requirements. Click Run to process all pending applications.</p><div class="flex" style="margin-top:10px"><button class="btn btn-gold" onclick="runAutoAdmission()">▶ Run Auto Admission Now</button><button class="btn" style="background:#dc2626;color:#fff" onclick="resetAdmission()">Reset Admission (For Testing)</button><label style="font-size:12px"><input type="checkbox" id="autoOn" checked style="width:auto"> Auto-Run on new application</label></div></div>
+<div id="collegeSeats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px"></div>
+<div style="display:flex;gap:8px;margin-top:12px"><input id="adminSearch" oninput="renderAdmin()" placeholder="Search..." style="flex:1"><button class="btn" style="background:#16a34a;color:#fff" onclick="exportCSV()">Export CSV</button></div>
+</div>
+<div class="card"><div style="overflow-x:auto"><table><thead><tr><th>Rank</th><th>Student</th><th>%</th><th>Wishes (4)</th><th>Auto Result</th><th>Action</th></tr></thead><tbody id="adminBody"></tbody></table></div></div>
+</div>
+
+<!-- STUDENT -->
+<div id="page-student" class="hidden"><div class="card" style="max-width:600px;margin:auto;text-align:center"><span id="logoStudent"></span><h2>Student Portal</h2><p id="studentInfo"></p><div id="studentOut"></div></div></div>
+<!-- PRINT -->
+<div id="page-print" class="hidden card"><h2>Print Receipt</h2><div class="flex"><input id="printIndex" placeholder="Index Number"><button class="btn btn-dark" onclick="preparePrint()">Generate</button></div><div id="printArea"></div></div>
+<!-- VERIFY -->
+<div id="page-verify" class="hidden card" style="max-width:480px;margin:auto;text-align:center"><h2>Verify Admission</h2><input id="verifyCode" placeholder="UJ-XXXXXX" style="text-align:center;margin-top:10px"><button class="btn btn-dark" style="width:100%;margin-top:10px" onclick="verifyQR()">Verify →</button><div id="verifyOut"></div></div>
+</div>
+
+<script>
+// ===== FIREBASE CONFIG - PASTE YOUR CONFIG HERE =====
+const firebaseConfig = {
+  apiKey: "PASTE_YOUR_API_KEY",
+  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
+  projectId: "PASTE_YOUR_PROJECT_ID",
+  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId: "PASTE_APP_ID"
+};
+// ================================================
+let db=null, storage=null, useFirebase=false;
+try{ firebase.initializeApp(firebaseConfig); db=firebase.firestore(); storage=firebase.storage(); useFirebase=true; document.getElementById('fbStatus').textContent="Connected to Firebase - Live"; }catch(e){ document.getElementById('fbStatus').textContent="Firebase not configured - Running in Local Mode (will sync when configured)"; }
+
+function UJLogo(s){return `<svg width="${s}" height="${s}" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58" fill="#0B2C4A"/><circle cx="60" cy="60" r="58" fill="none" stroke="#D4A017" stroke-width="3"/><circle cx="60" cy="60" r="48" fill="#fff" stroke="#D4A017" stroke-width="1.5"/><text x="60" y="32" text-anchor="middle" font-size="8" font-weight="900" fill="#0B2C4A">UNIVERSITY OF JUBA</text><text x="60" y="98" text-anchor="middle" font-size="7" font-weight="900" fill="#D4A017">SOUTH SUDAN • 1975</text><path d="M30 68 L60 56 L90 68 L60 80 Z" fill="#2E86C1"/></svg>`}
+document.getElementById('logoHeader').innerHTML=UJLogo(52); document.getElementById('logoLogin').innerHTML=UJLogo(90); document.getElementById('logoStudent').innerHTML=UJLogo(80);
+
+const TOKENS={ "UJ-ADMIN-2026":{role:"SUPER ADMIN",canAccept:true}, "UJ-STAFF-2026":{role:"STAFF - VIEW ONLY",canAccept:false}, "UJ-FINANCE-2026":{role:"FINANCE",canAccept:false} };
+let currentUser=null, apps=[], docs={cert:null,nid:null,birth:null,photo:null};
+
+// ===== COLLEGES - CALIBRATED WITH GRADES =====
+const COLLEGES=[
+ {name:"School of Medicine",cut:88,seats:80,req:{Biology:85,Chemistry:85,English:70},fee:"1,500,000 SSP"},
+ {name:"School of Dentistry",cut:82,seats:40,req:{Biology:80,Chemistry:80},fee:"1,200,000 SSP"},
+ {name:"School of Pharmacy",cut:80,seats:60,req:{Chemistry:78,Biology:75},fee:"1,100,000 SSP"},
+ {name:"School of Engineering",cut:75,seats:120,req:{Mathematics:80,Physics:75},fee:"900,000 SSP"},
+ {name:"School of Nursing",cut:72,seats:100,req:{Biology:70,English:65},fee:"800,000 SSP"},
+ {name:"School of Computer Science & IT",cut:70,seats:150,req:{Mathematics:70,English:60},fee:"750,000 SSP"},
+ {name:"School of Law",cut:68,seats:200,req:{English:70,History:65},fee:"650,000 SSP"},
+ {name:"School of Business & Economics",cut:62,seats:250,req:{Mathematics:60},fee:"600,000 SSP"},
+ {name:"School of Education",cut:55,seats:300,req:{English:55},fee:"450,000 SSP"},
+ {name:"School of Agriculture",cut:55,seats:150,req:{Biology:55,Chemistry:50},fee:"500,000 SSP"},
+];
+const SUBJECTS=["English Language","Mathematics","Physics","Chemistry","Biology","Geography","History","Christian Religious Education"];
+function genToken(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let t="";for(let i=0;i<6;i++)t+=c[Math.floor(Math.random()*c.length)];return "UJ-STU-"+t;}
+function genReceipt(){return "UJ-"+Math.floor(100000+Math.random()*900000);}
+
+// ===== LOAD FROM FIREBASE =====
+async function loadApps(){
+ if(useFirebase && firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){
+   try{ let snap=await db.collection("applications").orderBy("pct","desc").get(); apps=snap.docs.map(d=>({id:d.id,...d.data()})); renderAdmin(); return; }catch(e){ console.log(e); }
+ }
+ apps=JSON.parse(localStorage.getItem('uj_v4')||'[]'); renderAdmin();
+}
+async function saveApp(app){
+ if(useFirebase && firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){ try{ await db.collection("applications").doc(String(app.id)).set(app); return; }catch(e){} }
+ apps.unshift(app); localStorage.setItem('uj_v4',JSON.stringify(apps));
+}
+async function updateAppInDB(app){
+ if(useFirebase && firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){ try{ await db.collection("applications").doc(String(app.id)).set(app); }catch(e){} }
+ localStorage.setItem('uj_v4',JSON.stringify(apps));
+}
+
+function renderNav(){
+ let n=document.getElementById('navBtns');
+ if(!currentUser){ n.innerHTML=`<button class="btn btn-gold" onclick="showPage('login')">Login</button><button class="btn btn-ghost" onclick="goApply()">Apply</button>`; return; }
+ document.getElementById('whoami').textContent="Logged in: "+currentUser.role;
+ if(currentUser.type==='student') n.innerHTML=`<button class="btn btn-gold" onclick="showPage('student')">My Portal</button><button class="btn btn-ghost" onclick="showPage('print')">Print</button><button class="btn btn-ghost" onclick="showPage('verify')">Verify</button><button class="btn btn-ghost" onclick="logout()">Logout</button>`;
+ else n.innerHTML=`<button class="btn btn-gold" onclick="showPage('admin')">Dashboard</button><button class="btn btn-ghost" onclick="goApply()">New Application</button><button class="btn btn-ghost" onclick="showPage('print')">Print</button><button class="btn btn-ghost" onclick="showPage('verify')">Verify</button><button class="btn btn-ghost" onclick="logout()">Logout</button>`;
+}
+function showPage(p){['login','apply','admin','student','print','verify'].forEach(x=>document.getElementById('page-'+x).classList.add('hidden')); document.getElementById('page-'+p).classList.remove('hidden');}
+function logout(){currentUser=null; localStorage.removeItem('uj_session_v4'); renderNav(); showPage('login');}
+function doLogin(){
+ let tok=document.getElementById('loginToken').value.trim().toUpperCase();
+ if(TOKENS[tok]){ currentUser={token:tok,role:TOKENS[tok].role,type:'staff',...TOKENS[tok]}; localStorage.setItem('uj_session_v4',JSON.stringify(currentUser)); renderNav(); showPage('admin'); loadApps(); return; }
+ let a=apps.find(x=>x.studentToken===tok); if(a){ currentUser={token:tok,role:"STUDENT - "+a.name,type:'student',studentId:a.id}; localStorage.setItem('uj_session_v4',JSON.stringify(currentUser)); renderNav(); showStudent(a); return; }
+ document.getElementById('loginError').textContent="Invalid Token";
+}
+function goApply(){ showPage('apply'); renderSubjects(); }
+function getMarks(){ let vals={}; document.querySelectorAll('[data-sub]').forEach(i=>{if(i.value) vals[i.dataset.sub]=Number(i.value)}); return vals; }
+function getPctAndCheck(){
+ let vals=getMarks(); if(!vals['English Language']||!vals['Mathematics']) return {pct:0,vals};
+ let others=Object.entries(vals).filter(([k])=>k!=='English Language'&&k!=='Mathematics').sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[1]); if(others.length<3) return {pct:0,vals};
+ let total=vals['English Language']+vals['Mathematics']+others.reduce((a,b)=>a+b,0); return {pct:Number((total/500*100).toFixed(1)), vals, total};
+}
+function isEligible(col, vals, pct){
+ if(pct < col.cut) return {ok:false, reason:`Need ${col.cut}% - You have ${pct}%`};
+ for(let sub in col.req){ let mark=vals[sub]!==undefined?vals[sub]:vals[sub+" Language"]||0; if(sub==="English") mark=vals["English Language"]||0; if(sub==="Mathematics") mark=vals["Mathematics"]||0; if(mark < col.req[sub]) return {ok:false, reason:`Need ${sub} >= ${col.req[sub]} - You have ${mark}`}; }
+ return {ok:true, reason:"Eligible"};
+}
+function renderSubjects(){
+ document.getElementById('subjectsBox').innerHTML=SUBJECTS.map(s=>`<label style="display:flex;justify-content:space-between;background:#F8F9FA;padding:8px;border-radius:10px;font-size:13px"><span>${s}</span><input type="number" data-sub="${s}" oninput="calcPct()" placeholder="0-100" style="width:70px;padding:6px;text-align:center"></label>`).join('');
+ document.getElementById('wishesBox').innerHTML=[1,2,3,4].map(i=>`<select id="wish${i}" onchange="calcPct()"><option value="">Wish ${i} - Select College (4 Only)</option>${COLLEGES.map(c=>`<option>${c.name} - Cut ${c.cut}% - ${c.seats} Seats</option>`).join('')}</select>`).join('');
+}
+function calcPct(){
+ let {pct,vals}=getPctAndCheck(); document.getElementById('calcPct').textContent=pct? pct+'%':'0%';
+ if(!pct) return 0;
+ let eligible=COLLEGES.filter(c=>isEligible(c,vals,pct).ok);
+ document.getElementById('eligibilityBox').innerHTML=`<b style="color:#16a34a">You are eligible for ${eligible.length} colleges:</b> ${eligible.map(c=>c.name).join(', ')}`;
+ // Color wishes
+ [1,2,3,4].forEach(i=>{ let sel=document.getElementById('wish'+i); if(!sel.value) return; let cname=sel.value.split(' - Cut')[0]; let col=COLLEGES.find(c=>c.name===cname); if(!col) return; let chk=isEligible(col,vals,pct); sel.className=chk.ok?'wishOk':'wishNo'; sel.title=chk.reason; });
+ return pct;
+}
+function uploadFile(e,t){ let f=e.target.files[0]; if(!f) return; let r=new FileReader(); r.onload=ev=>{ docs[t]=ev.target.result; let img=document.getElementById('img-'+t); img.src=docs[t]; img.classList.remove('hidden'); document.getElementById('st-'+t).textContent='Uploaded'; document.getElementById('st-'+t).style.color='#16a34a'; }; r.readAsDataURL(f); }
+
+async function submitApp(){
+ let {pct,vals}=getPctAndCheck(); let name=document.getElementById('fName').value.trim(); let idx=document.getElementById('fIndex').value.trim(); let nid=document.getElementById('fNational').value.trim();
+ if(!name||!idx||!nid){ alert('Fill Name, Seat Number, National ID'); return; }
+ if(apps.some(a=>a.index===idx)){ alert('DUPLICATE Seat Number'); return; }
+ if(apps.some(a=>a.national===nid)){ alert('DUPLICATE National ID'); return; }
+ if(!docs.cert||!docs.nid||!docs.birth||!docs.photo){ alert('Upload all 4 documents'); return; }
+ if(!pct){ alert('Enter 5 subjects'); return; }
+ let wishes=[1,2,3,4].map(i=>{ let v=document.getElementById('wish'+i).value; return v? v.split(' - Cut')[0] : ''; }).filter(Boolean);
+ if(wishes.length!==4){ alert('You must choose exactly 4 colleges'); return; }
+ // Check each wish eligibility
+ for(let w of wishes){ let col=COLLEGES.find(c=>c.name===w); let chk=isEligible(col,vals,pct); if(!chk.ok){ alert(`Not eligible for ${w}: ${chk.reason}`); return; } }
+ let app={id:Date.now(), receipt:genReceipt(), studentToken:genToken(), name, index:idx, national:nid, phone:document.getElementById('fPhone').value, gender:document.getElementById('fGender').value, state:document.getElementById('fState').value, school:document.getElementById('fSchool').value, year:document.getElementById('fYear').value, type:document.getElementById('fType').value, program:document.getElementById('fProgram').value, scholarship:document.getElementById('fScholarship').checked, pct, marks:vals, wishes, pay:document.getElementById('fPay').value, payRef:document.getElementById('fPayRef').value, docs:{...docs}, status:'Pending - Waiting for Auto Admission', admittedTo:'', date:new Date().toLocaleString(), createdAt:Date.now()};
+ await saveApp(app);
+ document.getElementById('submitMsg').innerHTML=`<b style="color:#16a34a">Submitted to Firebase!</b><br>Receipt: <b>${app.receipt}</b><br>Student Token: <b style="background:#FEF3C7;padding:4px 10px;border-radius:6px">${app.studentToken}</b><br>Keep this token to login and check auto admission result.`;
+ currentUser={token:app.studentToken,role:"STUDENT - "+app.name,type:'student',studentId:app.id}; localStorage.setItem('uj_session_v4',JSON.stringify(currentUser)); renderNav();
+ if(document.getElementById('autoOn')?.checked) await runAutoAdmission(true);
+ showStudent(app);
+}
+
+// ===== AUTO ADMISSION ENGINE - COMPETITION BASED =====
+async function runAutoAdmission(silent){
+ // 1. Sort all pending by pct descending - highest first
+ let pending=[...apps].sort((a,b)=>b.pct - a.pct);
+ // 2. Count already admitted per college
+ let filled={}; COLLEGES.forEach(c=>filled[c.name]=apps.filter(a=>a.admittedTo===c.name && a.status==='Accepted').length);
+ let updated=0;
+ for(let app of pending){
+   if(app.status==='Accepted') continue;
+   let assigned=null;
+   // Try wishes in order 1->4
+   for(let wish of app.wishes){
+     let col=COLLEGES.find(c=>c.name===wish); if(!col) continue;
+     // Check seats
+     if(filled[wish] >= col.seats) continue; // Full - go to next wish
+     // Check eligibility again
+     let chk=isEligible(col, app.marks||{}, app.pct); if(!chk.ok) continue;
+     // Assign!
+     assigned=wish; filled[wish]++; break;
+   }
+   if(assigned){ app.status='Accepted'; app.admittedTo=assigned; }
+   else { app.status='Not Admitted - No Seat / Below Competition'; app.admittedTo=''; }
+   await updateAppInDB(app); updated++;
+ }
+ await loadApps();
+ if(!silent) alert(`Auto Admission Completed!\nProcessed: ${updated} students\nCheck Dashboard for results.`);
+}
+async function resetAdmission(){ if(!confirm('Reset all admission results?')) return; for(let a of apps){ a.status='Pending - Waiting for Auto Admission'; a.admittedTo=''; await updateAppInDB(a); } await loadApps(); alert('Reset done'); }
+
+function renderAdmin(){
+ let q=(document.getElementById('adminSearch')?.value||'').toLowerCase(); let sorted=[...apps].sort((a,b)=>b.pct-a.pct);
+ let list=sorted.filter(a=>(a.name+' '+a.index).toLowerCase().includes(q));
+ document.getElementById('stTotal').textContent=apps.length; document.getElementById('stAccepted').textContent=apps.filter(a=>a.status==='Accepted').length; document.getElementById('stPending').textContent=apps.filter(a=>a.status.includes('Pending')).length;
+ let totalSeats=COLLEGES.reduce((s,c)=>s+c.seats,0); let filled=apps.filter(a=>a.status==='Accepted').length; document.getElementById('stSeats').textContent=`${filled} / ${totalSeats}`;
+ document.getElementById('collegeSeats').innerHTML=COLLEGES.map(c=>{ let f=apps.filter(a=>a.admittedTo===c.name).length; let perc=Math.round(f/c.seats*100); return `<div style="background:#fff;border:1px solid #eee;border-radius:12px;padding:10px"><div style="display:flex;justify-content:space-between;font-size:12px"><b>${c.name}</b><span>${f}/${c.seats}</span></div><div style="background:#eee;border-radius:999px;height:8px;margin-top:6px;overflow:hidden"><div style="width:${perc}%;background:${perc>=100?'#dc2626':'#D4A017'};height:100%"></div></div><p style="font-size:11px;color:#888">Cut: ${c.cut}% | ${perc}% Filled ${perc>=100?' - FULL':''}</p></div>`}).join('');
+ document.getElementById('adminBody').innerHTML=list.map((a,i)=>`<tr><td><b>#${i+1}</b></td><td><b>${a.name}</b><br><span style="font-size:11px">${a.index} | ${a.state}</span><br><img src="${a.docs?.photo||''}" style="width:32px;height:32px;object-fit:cover;border-radius:6px"></td><td><b>${a.pct}%</b></td><td style="font-size:11px">${a.wishes.map((w,j)=>`${j+1}. ${w}`).join('<br>')}</td><td><span class="badge" style="background:${a.status==='Accepted'?'#dcfce7':'#fee2e2'}">${a.status}</span><br><b style="color:#16a34a">${a.admittedTo||''}</b></td><td><button onclick="printById(${a.id})" style="background:#0B2C4A;color:#fff;border:none;padding:5px 10px;border-radius:999px">Print</button></td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999;padding:20px">No applications - Database empty. Ready for production.</td></tr>';
+}
+function showStudent(a){ showPage('student'); document.getElementById('studentInfo').innerHTML=`<b>${a.name}</b><br>Seat: ${a.index} | NID: ${a.national} | Receipt: ${a.receipt}<br>Token: <b>${a.studentToken}</b><br>Percentage: <b>${a.pct}%</b><br>Wishes: ${a.wishes.join(' → ')}`; document.getElementById('studentOut').innerHTML= a.status==='Accepted' ? `<div style="background:#dcfce7;padding:14px;border-radius:12px;margin-top:12px"><p style="font-weight:900;color:#166534">🎉 ACCEPTED to ${a.admittedTo}</p><p>Congratulations! Print your admission letter.</p><button class="btn btn-dark" style="margin-top:10px" onclick="printById(${a.id})">Print Admission Letter</button></div>` : `<div style="background:#ffedd5;padding:14px;border-radius:12px;margin-top:12px"><p><b>Status:</b> ${a.status}</p><p style="font-size:12px">Auto admission runs based on competition. Check again after admin runs admission.</p></div>`; }
+function verifyQR(){ let code=document.getElementById('verifyCode').value.trim().toUpperCase(); let a=apps.find(x=>x.receipt===code||x.studentToken===code); if(!a){ document.getElementById('verifyOut').innerHTML='<p style="background:#fee2e2;color:#991b1b;padding:12px;border-radius:12px;font-weight:800">❌ FAKE - Not Found</p>'; return; } document.getElementById('verifyOut').innerHTML=`<div style="background:#dcfce7;padding:14px;border-radius:12px;text-align:left"><p style="font-weight:900;color:#166534">✅ VERIFIED - GENUINE</p><p><b>${a.name}</b> - ${a.pct}% - Admitted: ${a.admittedTo||'Pending'}</p></div>`; }
+function exportCSV(){ let csv="Rank,Name,Index,NationalID,Pct,Wish1,Wish2,Wish3,Wish4,AdmittedTo,Status,Receipt\n"+[...apps].sort((a,b)=>b.pct-a.pct).map((a,i)=>`${i+1},${a.name},${a.index},${a.national},${a.pct},${a.wishes[0]},${a.wishes[1]},${a.wishes[2]},${a.wishes[3]},${a.admittedTo},${a.status},${a.receipt}`).join('\n'); let b=new Blob([csv],{type:'text/csv'}); let u=URL.createObjectURL(b); let l=document.createElement('a'); l.href=u; l.download='UJ-Auto-Admission.csv'; l.click(); }
+function preparePrint(){ let idx=document.getElementById('printIndex').value.trim(); let a=apps.find(x=>x.index===idx); if(!a){ document.getElementById('printArea').innerHTML='Not found'; return; } printById(a.id); }
+function printById(id){ let a=apps.find(x=>x.id===id); if(!a) return; showPage('print'); document.getElementById('printArea').innerHTML=`<div style="border:3px solid #0B2C4A;border-radius:16px;padding:20px;max-width:600px;margin:auto;background:#fff"><div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #D4A017;padding-bottom:12px">${UJLogo(70)}<div style="text-align:right"><h2>University of Juba</h2><p style="font-size:11px;color:#D4A017;font-weight:800">OFFICIAL ADMISSION ${a.status==='Accepted'?'LETTER':'RECEIPT'}</p></div></div><p style="margin:12px 0;font-size:13px;line-height:1.8"><b>${a.name}</b><br>Seat: <b>${a.index}</b> | NID: <b>${a.national}</b> | Pct: <b>${a.pct}%</b><br>Wishes: ${a.wishes.join(' → ')}<br><b style="color:#16a34a;font-size:16px">${a.status==='Accepted'?'Admitted to: '+a.admittedTo : 'Status: '+a.status}</b><br>Receipt: ${a.receipt} | Token: ${a.studentToken}</p><p style="font-size:11px;color:#888">Verified via QR: ${a.receipt}</p></div><div style="text-align:center;margin-top:12px"><button onclick="window.print()" style="background:#0B2C4A;color:#fff;border:none;padding:12px 24px;border-radius:999px;font-weight:800">PRINT NOW</button></div>`; }
+renderSubjects(); loadApps(); renderNav();
+let saved=localStorage.getItem('uj_session_v4'); if(saved){ try{ currentUser=JSON.parse(saved); renderNav(); }catch(e){} }
+</script>
+</body>
+</html>

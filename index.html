@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>University of Juba - Admissions V8 + Firebase</title>
+<title>University of Juba - Admissions V8</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}body{background:#F2F3F5}
 .top{background:#0B2C4A;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}.top span{color:#D4A017;font-size:12px}
@@ -20,61 +20,59 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;borde
 </style>
 </head>
 <body>
-<div class="top"><div><b>UNIVERSITY OF JUBA</b><br><span>Admissions V8 + Firebase • Science / Arts • Cloud Sync</span></div><div id="topUser" style="text-align:right"></div></div>
+<div class="top"><div><b>UNIVERSITY OF JUBA</b><br><span>Admissions V8 + Firebase - Science / Arts - Cloud Sync</span></div><div id="topUser" style="text-align:right"></div></div>
 <div class="wrap">
-<div id="loginPage" class="card" style="max-width:480px;margin:30px auto;text-align:center">
-<div style="font-size:40px">🎓</div><h3>Admissions Login</h3><p class="small">Firebase Firestore - Real Cloud Database</p><br>
-<input id="loginToken" placeholder="Enter Staff Token" style="text-align:center;text-transform:uppercase">
-<button class="btn btn-gold" onclick="doLogin()" style="width:100%;margin-top:10px" id="loginBtn">Login →</button>
-<div style="margin:14px 0;color:#999;font-size:12px">— OR —</div>
-<label class="btn btn-navy" style="display:block;cursor:pointer">🔑 Login with USB Flash Key<input type="file" id="flashKeyFile" accept=".txt,.key" onchange="loginWithFlash(event)" style="display:none"></label>
-<p class="small" style="margin-top:8px">Flash must contain: UJ-KEY.txt</p>
-<p id="loginMsg" class="small" style="color:red;margin-top:8px"></p>
-<p class="small" style="margin-top:14px;background:#F8F9FA;padding:10px;border-radius:10px">Firestore Tokens:<br><b>UJ-ADMIN-2026</b> • <b>UJ-STAFF-2026</b> • <b>UJ-FINANCE-2026</b></p>
-<p id="firebaseStatus" class="small" style="margin-top:8px">Connecting to Firebase...</p>
+
+<!-- WELCOME - NO TOKEN -->
+<div id="welcomePage" class="card" style="max-width:480px;margin:30px auto;text-align:center">
+<div style="font-size:40px">🎓</div><h3>University of Juba - Admissions</h3><p class="small">Welcome - Please Enter Your Details to Continue</p><br>
+<input id="staffName" placeholder="Enter Your Name - e.g. Akol Majok">
+<select id="staffRole" style="margin-top:10px"><option value="SUPER ADMIN">Role: SUPER ADMIN - Full Access</option><option value="STAFF">Role: STAFF - Register Only</option><option value="FINANCE">Role: FINANCE - View Only</option></select>
+<button class="btn btn-gold" onclick="enterSystem()" style="width:100%;margin-top:12px">Enter System →</button>
+<p id="firebaseStatus" class="small" style="margin-top:12px">Connecting to Firebase...</p>
 </div>
 
 <div id="appPage" class="hidden">
-<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><span id="syncBadge" class="sync">● CLOUD SYNCED</span><span class="small" id="lastSync">Last sync: -</span><button class="btn btn-grey" onclick="loadStudents()" style="padding:6px 12px;font-size:12px;margin-left:auto">🔄 Refresh</button></div>
+<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><span class="sync">● CLOUD SYNCED</span><span class="small" id="lastSync">Last sync: -</span><button class="btn btn-grey" onclick="loadStudents()" style="padding:6px 12px;font-size:12px;margin-left:auto">🔄 Refresh</button></div>
 <div class="kpi"><div><b id="kTotal">0</b><p>Total Applicants</p></div><div><b id="kScience">0</b><p>Science</p></div><div><b id="kArts">0</b><p>Arts</p></div><div><b id="kAccepted">0</b><p>Accepted</p></div></div>
 <div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn btn-gold" onclick="showTab('reg')">+ New Student</button><button class="btn btn-navy" onclick="showTab('list')">All Students</button><button class="btn btn-navy" onclick="showTab('admission')">Run Admission</button><button class="btn btn-grey" onclick="showTab('reports')">Reports</button><button class="btn btn-grey" onclick="exportCSV()">Export CSV</button><button class="btn btn-red" onclick="doLogout()" style="margin-left:auto">Logout</button></div></div>
+<button class="btn btn-gold" onclick="showTab('reg')">+ New Student</button><button class="btn btn-navy" onclick="showTab('list')">All Students</button><button class="btn btn-navy" onclick="showTab('admission')">Run Admission</button><button class="btn btn-grey" onclick="showTab('reports')">Reports</button><button class="btn btn-grey" onclick="exportCSV()">Export CSV</button><button class="btn btn-red" onclick="doLogout()" style="margin-left:auto">Exit</button></div></div>
 
 <div id="tab-reg" class="card">
 <h3>📝 New Student Registration</h3>
 <div class="grid2">
-<input id="fName" placeholder="Full Name - as in Certificate *"><input id="fSeat" placeholder="Seat Number *">
-<input id="fPhone" placeholder="Phone"><input id="fNational" placeholder="National ID">
+<input id="fName" placeholder="Full Name - As in Certificate *"><input id="fSeat" placeholder="Seat Number *">
+<input id="fPhone" placeholder="Phone"><input id="fNational" placeholder="National ID Number">
 <select id="fGender"><option value="">Gender *</option><option>Male</option><option>Female</option></select>
 <select id="fState"><option value="">State *</option><option>Central Equatoria</option><option>Eastern Equatoria</option><option>Western Equatoria</option><option>Jonglei</option><option>Unity</option><option>Upper Nile</option><option>Warrap</option><option>Northern Bahr el Ghazal</option><option>Western Bahr el Ghazal</option><option>Lakes</option><option>Other</option></select>
 <input id="fSchool" placeholder="Secondary School Name *"><input id="fYear" placeholder="Exam Year" value="2025">
 <select id="fStream" onchange="onStreamChange()" style="grid-column:span 2;border:2px solid #D4A017;font-weight:800"><option value="">Select Stream *</option><option value="Science">Science</option><option value="Arts">Arts / Humanities</option></select>
 </div>
 <div id="streamInfo" style="margin:12px 0"></div>
-<h3 style="margin-top:14px">📚 Subjects & Marks</h3><p class="small">Best 5 (English + Maths compulsory) / 500</p>
-<div id="subjectsBox" class="grid2" style="margin-top:10px"><p class="small" style="grid-column:span 2;background:#FFF8E1;padding:12px;border-radius:10px">Select Stream to show subjects</p></div>
+<h3 style="margin-top:14px">📚 Subjects & Marks</h3><p class="small">Best 5 Subjects (English + Mathematics Compulsory) / 500</p>
+<div id="subjectsBox" class="grid2" style="margin-top:10px"><p class="small" style="grid-column:span 2;background:#FFF8E1;padding:12px;border-radius:10px">Select Stream to Show Subjects</p></div>
 <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><div class="chip">Percentage: <b id="calcPct">0%</b></div><div class="chip">Total: <b id="calcTotal">0 / 500</b></div><div class="chip" id="calcElig">Eligible: -</div></div>
-<h3 style="margin-top:16px">🎯 4 Wishes</h3><div id="wishesBox"><p class="small">Select Stream first</p></div>
+<h3 style="margin-top:16px">🎯 4 Wishes - Preferences</h3><div id="wishesBox"><p class="small">Select Stream First</p></div>
 <h3 style="margin-top:16px">💳 Payment</h3><div class="grid3"><select id="fPayMethod"><option>Cash</option><option>m-GURUSH</option><option>MTN MoMo</option><option>Bank Transfer</option></select><input id="fPayRef" placeholder="Payment Reference"><input id="fPayAmount" placeholder="Amount SSP" value="50000"></div>
 <button class="btn btn-gold" onclick="submitApp()" style="width:100%;margin-top:14px" id="saveBtn">✅ Register Student & Print Receipt</button>
 <p id="regMsg" class="small" style="margin-top:8px"></p>
 </div>
 
 <div id="tab-list" class="card hidden"><h3>👥 All Students - From Firestore</h3>
-<div class="grid3" style="margin-bottom:10px"><input id="searchBox" placeholder="Search name / seat..." oninput="renderList()"><select id="filterStream" onchange="renderList()"><option value="">All Streams</option><option>Science</option><option>Arts</option></select><select id="filterStatus" onchange="renderList()"><option value="">All Status</option><option>Pending</option><option>Accepted</option><option>Waiting List</option><option>Confirmed</option><option>Not Admitted</option></select></div>
+<div class="grid3" style="margin-bottom:10px"><input id="searchBox" placeholder="Search Name / Seat Number..." oninput="renderList()"><select id="filterStream" onchange="renderList()"><option value="">All Streams</option><option>Science</option><option>Arts</option></select><select id="filterStatus" onchange="renderList()"><option value="">All Status</option><option>Pending</option><option>Accepted</option><option>Waiting List</option><option>Confirmed</option><option>Not Admitted</option></select></div>
 <div style="overflow-x:auto"><table><thead><tr><th>Name</th><th>Stream</th><th>Seat</th><th>%</th><th>Wish 1</th><th>Status</th><th>Action</th></tr></thead><tbody id="studentsBody"></tbody></table></div></div>
 
-<div id="tab-admission" class="card hidden"><h3>🏆 Auto Admission</h3><p class="small">Stream checked first, then % and subject requirements.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px" id="collegeSeatsBox"></div>
-<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn btn-green" id="btnRunAdm" onclick="runAdmission()">▶ Run 1st Round</button><button class="btn btn-gold" onclick="runSecondRound()">🔁 Run 2nd Round</button><button class="btn btn-red" onclick="resetAdmission()">↺ Reset</button></div><div id="admResult" style="margin-top:12px"></div></div>
+<div id="tab-admission" class="card hidden"><h3>🏆 Automatic Admission</h3><p class="small">Stream is Checked First, Then Percentage and Subject Requirements.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px" id="collegeSeatsBox"></div>
+<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn btn-green" id="btnRunAdm" onclick="runAdmission()">▶ Run 1st Round Admission</button><button class="btn btn-gold" onclick="runSecondRound()">🔁 Run 2nd Round</button><button class="btn btn-red" onclick="resetAdmission()">↺ Reset Admission</button></div><div id="admResult" style="margin-top:12px"></div></div>
 
 <div id="tab-reports" class="card hidden"><h3>📊 Reports</h3><div id="reportsBox"></div></div>
 </div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, collection, getDocs, deleteDoc, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ===== REPLACE WITH YOUR PROJECT CONFIG FROM Firebase Console > Project Settings =====
+// ===== YOUR FIREBASE CONFIG - REPLACE WITH YOUR PROJECT CONFIG =====
 const firebaseConfig = {
   apiKey: "AIzaSyAhkYk6HmwJNlzW7FJ52J_iavQhi3PdvSQ",
   authDomain: "dufa-ae9f5.firebaseapp.com",
@@ -86,7 +84,7 @@ const firebaseConfig = {
 
 let db=null;
 try{ const app=initializeApp(firebaseConfig); db=getFirestore(app); document.getElementById('firebaseStatus').innerHTML='<span style="color:green">✅ Firebase Connected - Project: '+firebaseConfig.projectId+'</span>'; }
-catch(e){ document.getElementById('firebaseStatus').innerHTML='<span style="color:red">❌ Firebase not configured - Paste your firebaseConfig</span>'; }
+catch(e){ document.getElementById('firebaseStatus').innerHTML='<span style="color:red">❌ Firebase Not Configured</span>'; }
 
 const COLLEGES=[
   {name:"School of Medicine",stream:"Science",cut:88,seats:80,req:{Biology:85,Chemistry:85,"English Language":75},depts:[{name:"General Medicine",seats:80,cut:88,stream:"Science"}]},
@@ -102,72 +100,54 @@ const COLLEGES=[
 ];
 const SCIENCE=["English Language","Mathematics","Physics","Chemistry","Biology"];
 const ARTS=["English Language","Mathematics","Geography","History","Christian Religious Education","Commerce"];
-let students=[], currentUser=null, currentToken="";
+let students=[], currentUser={name:"Demo User", role:"SUPER ADMIN", canRunAdmission:true, canEdit:true, canDelete:true};
 
-window.doLogin=async function(){
-  let tok=document.getElementById('loginToken').value.trim().toUpperCase();
-  if(!tok) return alert("Enter Token");
-  document.getElementById('loginBtn').innerText="Checking Firestore..."; document.getElementById('loginBtn').disabled=true;
-  try{
-    if(!db) throw new Error("Firebase not configured");
-    const snap=await getDoc(doc(db,"staff_tokens",tok));
-    if(!snap.exists()){ document.getElementById('loginMsg').innerText="Invalid Token - Token not found in Firestore"; document.getElementById('loginBtn').innerText="Login →"; document.getElementById('loginBtn').disabled=false; return; }
-    const u=snap.data();
-    if(u.active===false){ document.getElementById('loginMsg').innerText="Token Disabled - Contact Admin"; document.getElementById('loginBtn').innerText="Login →"; document.getElementById('loginBtn').disabled=false; return; }
-    currentUser=u; currentToken=tok;
-    document.getElementById('loginPage').classList.add('hidden'); document.getElementById('appPage').classList.remove('hidden');
-    document.getElementById('topUser').innerHTML=`<b style="font-size:13px">${u.name} - ${u.role}</b><br><span style="font-size:11px">Token: ${tok} • Firestore</span>`;
-    if(!u.canRunAdmission) document.getElementById('btnRunAdm').style.display='none';
-    await addAudit('LOGIN','Login with token '+tok);
-    startRealtime(); await loadStudents(); showTab('reg');
-  }catch(e){ document.getElementById('loginMsg').innerText="Error: "+e.message; document.getElementById('loginBtn').innerText="Login →"; document.getElementById('loginBtn').disabled=false; }
-};
-window.loginWithFlash=async function(e){
-  let f=e.target.files[0]; if(!f) return;
-  if(f.name!=="UJ-KEY.txt" && f.name!=="UJ-KEY.key") return alert("Wrong file - Must be UJ-KEY.txt");
-  let tok=(await f.text()).trim().toUpperCase(); document.getElementById('loginToken').value=tok; e.target.value=""; window.doLogin();
+// ENTER SYSTEM - NO TOKEN
+window.enterSystem=function(){
+  let n=document.getElementById('staffName').value.trim() || "Demo User";
+  let r=document.getElementById('staffRole').value;
+  currentUser={name:n, role:r, canRunAdmission:(r==="SUPER ADMIN"), canEdit:(r!=="FINANCE"), canDelete:(r==="SUPER ADMIN")};
+  document.getElementById('welcomePage').classList.add('hidden'); document.getElementById('appPage').classList.remove('hidden');
+  document.getElementById('topUser').innerHTML=`<b style="font-size:13px">${n} - ${r}</b><br><span style="font-size:11px">Admissions System</span>`;
+  if(!currentUser.canRunAdmission) document.getElementById('btnRunAdm').style.display='none';
+  addAudit('LOGIN','Entered System - '+n);
+  startRealtime(); loadStudents(); showTab('reg');
 };
 window.doLogout=function(){ location.reload(); };
-async function addAudit(action,detail){ if(!db) return; try{ await addDoc(collection(db,"audit_logs"),{action,detail,by:currentUser?currentUser.name:'-',token:currentToken,createdAt:serverTimestamp()}); }catch(e){} }
-
-function startRealtime(){
-  if(!db) return;
-  onSnapshot(collection(db,"students"),(snap)=>{ students=snap.docs.map(d=>({fid:d.id,...d.data()})); updateSync(); renderAll(); });
-}
-function updateSync(){ document.getElementById('lastSync').innerText="Last sync: "+new Date().toLocaleTimeString()+" • "+students.length+" students in Firestore"; }
-window.loadStudents=async function(){
-  if(!db) return; const snap=await getDocs(collection(db,"students")); students=snap.docs.map(d=>({fid:d.id,...d.data()})); updateSync(); renderAll();
-};
+async function addAudit(action,detail){ if(!db) return; try{ await addDoc(collection(db,"audit_logs"),{action,detail,by:currentUser?currentUser.name:'-',createdAt:serverTimestamp()}); }catch(e){} }
+function startRealtime(){ if(!db) return; onSnapshot(collection(db,"students"),(snap)=>{ students=snap.docs.map(d=>({fid:d.id,...d.data()})); updateSync(); renderAll(); }); }
+function updateSync(){ document.getElementById('lastSync').innerText="Last Sync: "+new Date().toLocaleTimeString()+" - "+students.length+" Students in Firestore"; }
+window.loadStudents=async function(){ if(!db) return; const snap=await getDocs(collection(db,"students")); students=snap.docs.map(d=>({fid:d.id,...d.data()})); updateSync(); renderAll(); };
 
 window.onStreamChange=function(){
   let s=document.getElementById('fStream').value; if(!s) return;
   let subs=s==="Science"?SCIENCE:ARTS;
-  document.getElementById('streamInfo').innerHTML=s==="Science"?`<div style="background:#E8F5E9;border:1px solid #2E7D32;padding:10px;border-radius:10px;font-size:13px">🔬 <b>Science</b> - Medicine, Dentistry, Pharmacy, Engineering, Nursing, CS, Agriculture, Business, Education</div>`:`<div style="background:#F3E5F5;border:1px solid #7B1FA2;padding:10px;border-radius:10px;font-size:13px">📚 <b>Arts</b> - Law, Business, Education - <b>Cannot apply for Medicine / Engineering</b></div>`;
+  document.getElementById('streamInfo').innerHTML=s==="Science"?`<div style="background:#E8F5E9;border:1px solid #2E7D32;padding:10px;border-radius:10px;font-size:13px">🔬 <b>Science</b> - Medicine, Dentistry, Pharmacy, Engineering, Nursing, Computer Science, Agriculture, Business, Education</div>`:`<div style="background:#F3E5F5;border:1px solid #7B1FA2;padding:10px;border-radius:10px;font-size:13px">📚 <b>Arts</b> - Law, Business, Education - <b>Cannot Apply for Medicine / Engineering</b></div>`;
   document.getElementById('subjectsBox').innerHTML=subs.map(x=>`<label style="display:flex;justify-content:space-between;background:#F8F9FA;padding:8px;border-radius:10px;font-size:13px"><span>${x}</span><input type="number" min="0" max="100" data-sub="${x}" oninput="calcPct()" placeholder="0-100" style="width:80px;padding:6px;text-align:center"></label>`).join('');
   renderWishes(s); calcPct();
 };
 function renderWishes(stream){
   let allowed=COLLEGES.filter(c=>c.stream===stream||c.stream==="Both");
-  document.getElementById('wishesBox').innerHTML=[1,2,3,4].map(i=>`<div style="border:1px solid #eee;border-radius:12px;padding:10px;background:#F8F9FA;margin-bottom:8px"><p style="font-size:12px;font-weight:800">Wish ${i} - ${stream}</p><div class="grid2" style="margin-top:6px"><select id="wishCollege${i}" onchange="onCollegeChange(${i})"><option value="">Select College</option>${allowed.map(c=>`<option value="${c.name}">${c.name} - Cut ${c.cut}%</option>`).join('')}</select><select id="wishDept${i}"><option value="">Select Department</option></select></div><p id="wishMsg${i}" style="font-size:11px;margin-top:4px"></p></div>`).join('');
+  document.getElementById('wishesBox').innerHTML=[1,2,3,4].map(i=>`<div style="border:1px solid #eee;border-radius:12px;padding:10px;background:#F8F9FA;margin-bottom:8px"><p style="font-size:12px;font-weight:800">Wish ${i} - ${stream}</p><div class="grid2" style="margin-top:6px"><select id="wishCollege${i}" onchange="onCollegeChange(${i})"><option value="">Select College</option>${allowed.map(c=>`<option value="${c.name}">${c.name} - Cut-Off ${c.cut}%</option>`).join('')}</select><select id="wishDept${i}"><option value="">Select Department</option></select></div><p id="wishMsg${i}" style="font-size:11px;margin-top:4px"></p></div>`).join('');
 }
 window.onCollegeChange=function(i){
   let cn=document.getElementById('wishCollege'+i).value, s=document.getElementById('fStream').value; let col=COLLEGES.find(c=>c.name===cn); let ds=document.getElementById('wishDept'+i);
   if(!col){ ds.innerHTML='<option value="">Select Department</option>'; return; }
-  let depts=col.depts.filter(d=>d.stream===s||d.stream==="Both"); ds.innerHTML='<option value="">Select Department</option>'+depts.map(d=>`<option value="${d.name}">${d.name} - Cut ${d.cut}% - Seats ${d.seats}</option>`).join('');
+  let depts=col.depts.filter(d=>d.stream===s||d.stream==="Both"); ds.innerHTML='<option value="">Select Department</option>'+depts.map(d=>`<option value="${d.name}">${d.name} - Cut-Off ${d.cut}% - Seats ${d.seats}</option>`).join('');
   let chk=isEligible(col,getMarks(),calcPctVal(),s); document.getElementById('wishMsg'+i).innerHTML=chk.ok?`<span style="color:green">✅ Eligible</span>`:`<span style="color:red">❌ ${chk.reason}</span>`;
 };
 function getMarks(){ let o={}; document.querySelectorAll('[data-sub]').forEach(el=>{ if(el.value!=="") o[el.getAttribute('data-sub')]=parseFloat(el.value); }); return o; }
 function calcPctVal(){ let v=getMarks(); let eng=v["English Language"]||0, math=v["Mathematics"]||0; let others=Object.entries(v).filter(([k])=>k!=="English Language"&&k!=="Mathematics").map(([,x])=>x).sort((a,b)=>b-a).slice(0,3); if(Object.keys(v).length<5) return 0; return Math.round((eng+math+others.reduce((a,b)=>a+b,0))/5*10)/10; }
-window.calcPct=function(){ let p=calcPctVal(); let v=getMarks(); document.getElementById('calcPct').innerText=p+"%"; document.getElementById('calcTotal').innerText=Math.round(p*5)+" / 500"; let s=document.getElementById('fStream').value; if(s&&p>0){ let e=COLLEGES.filter(c=>isEligible(c,v,p,s).ok).map(c=>c.name.replace('School of ','')).join(', '); document.getElementById('calcElig').innerHTML="Eligible: "+(e||"None"); } return p; };
-function isEligible(col,vals,pct,stream){ if(col.stream!=="Both"&&col.stream!==stream) return {ok:false,reason:`For ${col.stream} only - You are ${stream}`}; if(pct<col.cut) return {ok:false,reason:`Need ${col.cut}% - You have ${pct}%`}; for(let k in col.req){ let m=vals[k]||0; if(m<col.req[k]) return {ok:false,reason:`Need ${k} >= ${col.req[k]} - You have ${m}`}; } return {ok:true}; }
+window.calcPct=function(){ let p=calcPctVal(); let v=getMarks(); document.getElementById('calcPct').innerText=p+"%"; document.getElementById('calcTotal').innerText=Math.round(p*5)+" / 500"; let s=document.getElementById('fStream').value; if(s&&p>0){ let e=COLLEGES.filter(c=>isEligible(c,v,p,s).ok).map(c=>c.name.replace('School of ','')).join(', '); document.getElementById('calcElig').innerHTML="Eligible For: "+(e||"None"); } return p; };
+function isEligible(col,vals,pct,stream){ if(col.stream!=="Both"&&col.stream!==stream) return {ok:false,reason:`For ${col.stream} Only - You Are ${stream}`}; if(pct<col.cut) return {ok:false,reason:`Need ${col.cut}% - You Have ${pct}%`}; for(let k in col.req){ let m=vals[k]||0; if(m<col.req[k]) return {ok:false,reason:`Need ${k} >= ${col.req[k]} - You Have ${m}`}; } return {ok:true}; }
 
 window.submitApp=async function(){
   let name=document.getElementById('fName').value.trim(), seat=document.getElementById('fSeat').value.trim(), stream=document.getElementById('fStream').value;
-  if(!name||!seat||!stream) return alert("Fill Name, Seat and Stream");
-  if(students.find(x=>x.seat===seat)) return alert("Duplicate Seat Number");
-  let vals=getMarks(); if(Object.keys(vals).length<5) return alert("Enter all 5 subjects");
+  if(!name||!seat||!stream) return alert("Please Fill Name, Seat Number and Stream");
+  if(students.find(x=>x.seat===seat)) return alert("Duplicate Seat Number - This Student Is Already Registered");
+  let vals=getMarks(); if(Object.keys(vals).length<5) return alert("Please Enter All 5 Subjects");
   let pct=calcPctVal(); let wishes=[]; for(let i=1;i<=4;i++){ let c=document.getElementById('wishCollege'+i).value, d=document.getElementById('wishDept'+i).value; if(c) wishes.push({college:c,dept:d}); }
-  if(!wishes.length) return alert("Select at least 1 Wish");
+  if(!wishes.length) return alert("Please Select At Least 1 Wish");
   for(let w of wishes){ let col=COLLEGES.find(c=>c.name===w.college); let chk=isEligible(col,vals,pct,stream); if(!chk.ok) return alert(`Wish ${w.college}: ${chk.reason}`); }
   document.getElementById('saveBtn').innerText="Saving to Firestore..."; document.getElementById('saveBtn').disabled=true;
   let recNo="UJ-"+Math.floor(100000+Math.random()*899999);
@@ -177,20 +157,20 @@ window.submitApp=async function(){
     await addAudit('REGISTER',`Registered ${name} - ${stream} - ${pct}% - ${recNo}`);
     document.getElementById('regMsg').innerHTML=`✅ Saved to Firestore! Receipt: <b>${recNo}</b> - ${name} - ${stream} - ${pct}%`;
     printReceiptData({...data,fid:ref.id}); document.getElementById('saveBtn').innerText="✅ Register Student & Print Receipt"; document.getElementById('saveBtn').disabled=false;
-  }catch(e){ alert("Save failed: "+e.message); document.getElementById('saveBtn').innerText="✅ Register Student & Print Receipt"; document.getElementById('saveBtn').disabled=false; }
+  }catch(e){ alert("Save Failed: "+e.message); document.getElementById('saveBtn').innerText="✅ Register Student & Print Receipt"; document.getElementById('saveBtn').disabled=false; }
 };
 function printReceiptData(s){
-  let w=window.open('','','width=600,height=700'); w.document.write(`<div style="font-family:Arial;padding:30px;border:2px solid #0B2C4A"><h2 style="text-align:center">UNIVERSITY OF JUBA</h2><p style="text-align:center">Admissions Receipt</p><hr><p><b>Receipt:</b> ${s.receipt}</p><p><b>Name:</b> ${s.name}</p><p><b>Seat:</b> ${s.seat}</p><p><b>Stream:</b> ${s.stream}</p><p><b>Percentage:</b> ${s.pct}%</p><p><b>Wishes:</b><br>${s.wishes.map((x,i)=>`${i+1}. ${x.college} - ${x.dept}`).join('<br>')}</p><p><b>Payment:</b> ${s.payMethod} - ${s.payRef} - ${s.payAmount} SSP</p></div>`); w.print();
+  let w=window.open('','','width=600,height=700'); w.document.write(`<div style="font-family:Arial;padding:30px;border:2px solid #0B2C4A"><h2 style="text-align:center">UNIVERSITY OF JUBA</h2><p style="text-align:center">Admissions Receipt</p><hr><p><b>Receipt Number:</b> ${s.receipt}</p><p><b>Name:</b> ${s.name}</p><p><b>Seat Number:</b> ${s.seat}</p><p><b>Stream:</b> ${s.stream}</p><p><b>Percentage:</b> ${s.pct}%</p><p><b>Wishes:</b><br>${s.wishes.map((x,i)=>`${i+1}. ${x.college} - ${x.dept}`).join('<br>')}</p><p><b>Payment:</b> ${s.payMethod} - ${s.payRef} - ${s.payAmount} SSP</p><p style="text-align:center;margin-top:20px;font-size:12px">Please Keep This Receipt - It Is Required For Admission</p></div>`); w.print();
 }
 window.printReceipt=function(fid){ let s=students.find(x=>x.fid===fid); if(s) printReceiptData(s); };
 window.showTab=function(t){ ['reg','list','admission','reports'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hidden',x!==t)); if(t==='list') renderList(); if(t==='reports') renderReports(); if(t==='admission') renderColleges(); };
 function renderList(){
   let q=(document.getElementById('searchBox').value||'').toLowerCase(), fs=document.getElementById('filterStream').value, fst=document.getElementById('filterStatus').value;
   let list=students.filter(s=>(!q||s.name.toLowerCase().includes(q)||s.seat.includes(q))&&(!fs||s.stream===fs)&&(!fst||s.status===fst));
-  document.getElementById('studentsBody').innerHTML=list.map(s=>`<tr><td>${s.name}<br><span class="small">${s.school} - ${s.state}</span></td><td><span class="badge" style="background:${s.stream==='Science'?'#C8E6C9':'#E1BEE7'}">${s.stream}</span></td><td>${s.seat}</td><td><b>${s.pct}%</b></td><td>${s.wishes[0]?.college?.replace('School of ','')||''}<br><span class="small">${s.wishes[0]?.dept||''}</span></td><td><span class="badge ${s.status.replace(' ','')}">${s.status}</span>${s.admittedTo?`<br><span class="small">${s.admittedTo}</span>`:''}</td><td><button class="btn btn-grey" onclick="printReceipt('${s.fid}')">Receipt</button> ${currentUser?.canEdit?`<button class="btn btn-navy" onclick="confirmStudent('${s.fid}')">Confirm</button>`:''} ${currentUser?.canDelete?`<button class="btn btn-red" onclick="delStudent('${s.fid}')">Del</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center">No students yet - Firestore empty</td></tr>';
+  document.getElementById('studentsBody').innerHTML=list.map(s=>`<tr><td>${s.name}<br><span class="small">${s.school} - ${s.state}</span></td><td><span class="badge" style="background:${s.stream==='Science'?'#C8E6C9':'#E1BEE7'}">${s.stream}</span></td><td>${s.seat}</td><td><b>${s.pct}%</b></td><td>${s.wishes[0]?.college?.replace('School of ','')||''}<br><span class="small">${s.wishes[0]?.dept||''}</span></td><td><span class="badge ${s.status.replace(' ','')}">${s.status}</span>${s.admittedTo?`<br><span class="small">${s.admittedTo}</span>`:''}</td><td><button class="btn btn-grey" onclick="printReceipt('${s.fid}')">Receipt</button> ${currentUser?.canEdit?`<button class="btn btn-navy" onclick="confirmStudent('${s.fid}')">Confirm</button>`:''} ${currentUser?.canDelete?`<button class="btn btn-red" onclick="delStudent('${s.fid}')">Del</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center">No Students Yet - Firestore Is Empty</td></tr>';
 }
-window.delStudent=async function(fid){ if(!confirm("Delete?")) return; await deleteDoc(doc(db,"students",fid)); await addAudit('DELETE','Deleted student '+fid); };
-window.confirmStudent=async function(fid){ let s=students.find(x=>x.fid===fid); if(s.status!=="Accepted") return alert("Must be Accepted first"); await setDoc(doc(db,"students",fid),{status:"Confirmed"},{merge:true}); await addAudit('CONFIRM','Confirmed '+s.name); };
+window.delStudent=async function(fid){ if(!confirm("Are You Sure You Want To Delete This Student?")) return; await deleteDoc(doc(db,"students",fid)); await addAudit('DELETE','Deleted Student '+fid); };
+window.confirmStudent=async function(fid){ let s=students.find(x=>x.fid===fid); if(s.status!=="Accepted") return alert("Student Must Be Accepted First"); await setDoc(doc(db,"students",fid),{status:"Confirmed"},{merge:true}); await addAudit('CONFIRM','Confirmed '+s.name); };
 function renderAll(){
   document.getElementById('kTotal').innerText=students.length;
   document.getElementById('kScience').innerText=students.filter(s=>s.stream==="Science").length;
@@ -199,31 +179,31 @@ function renderAll(){
   renderList(); renderColleges(); renderReports();
 }
 function renderColleges(){
-  document.getElementById('collegeSeatsBox').innerHTML=COLLEGES.map(c=>{ let acc=students.filter(s=>s.admittedTo===c.name).length; return `<div style="background:#F8F9FA;border-radius:12px;padding:12px"><b style="font-size:13px">${c.name}</b><br><span class="badge" style="background:${c.stream==='Science'?'#C8E6C9':c.stream==='Arts'?'#E1BEE7':'#FFF9C4'}">${c.stream}</span> <span class="small">Cut ${c.cut}% - Seats ${c.seats} - Filled ${acc} - Left ${c.seats-acc}</span><br><span class="small">Req: ${Object.entries(c.req).map(([k,v])=>`${k} ≥ ${v}`).join(' | ')}</span></div>`; }).join('');
+  document.getElementById('collegeSeatsBox').innerHTML=COLLEGES.map(c=>{ let acc=students.filter(s=>s.admittedTo===c.name).length; return `<div style="background:#F8F9FA;border-radius:12px;padding:12px"><b style="font-size:13px">${c.name}</b><br><span class="badge" style="background:${c.stream==='Science'?'#C8E6C9':c.stream==='Arts'?'#E1BEE7':'#FFF9C4'}">${c.stream}</span> <span class="small">Cut-Off ${c.cut}% - Seats ${c.seats} - Filled ${acc} - Remaining ${c.seats-acc}</span><br><span class="small">Requirements: ${Object.entries(c.req).map(([k,v])=>`${k} >= ${v}`).join(' | ')}</span></div>`; }).join('');
 }
 window.runAdmission=async function(){
-  if(!currentUser?.canRunAdmission) return alert("Only Admin");
-  if(!confirm("Run 1st Round?")) return;
+  if(!currentUser?.canRunAdmission) return alert("Only Admin Can Run Admission");
+  if(!confirm("Run 1st Round Admission?")) return;
   let sorted=[...students].sort((a,b)=>b.pct-a.pct); let filled={}; COLLEGES.forEach(c=>filled[c.name]=0);
   for(let s of sorted){ let placed=false; for(let w of s.wishes){ let col=COLLEGES.find(c=>c.name===w.college); if(!col) continue; if(!isEligible(col,s.marks,s.pct,s.stream).ok) continue; if(filled[col.name]<col.seats){ await setDoc(doc(db,"students",s.fid),{status:"Accepted",admittedTo:col.name},{merge:true}); filled[col.name]++; placed=true; break; } } if(!placed) await setDoc(doc(db,"students",s.fid),{status:"Waiting List",admittedTo:""},{merge:true}); }
-  await addAudit('ADMISSION','Run 1st Round'); document.getElementById('admResult').innerHTML=`<div style="background:#E8F5E9;padding:12px;border-radius:10px">✅ 1st Round Done - Saved to Firestore</div>`;
+  await addAudit('ADMISSION','Run 1st Round Admission'); document.getElementById('admResult').innerHTML=`<div style="background:#E8F5E9;padding:12px;border-radius:10px">✅ 1st Round Completed - Saved to Firestore</div>`;
 };
 window.runSecondRound=async function(){
-  if(!currentUser?.canRunAdmission) return alert("Only Admin");
+  if(!currentUser?.canRunAdmission) return alert("Only Admin Can Run Admission");
   let freed=students.filter(s=>s.status==="Accepted"); for(let s of freed) await setDoc(doc(db,"students",s.fid),{status:"Not Admitted",admittedTo:""},{merge:true});
   let waiting=students.filter(s=>s.status==="Waiting List").sort((a,b)=>b.pct-a.pct); let filled={}; COLLEGES.forEach(c=>filled[c.name]=students.filter(x=>x.status==="Confirmed"&&x.admittedTo===c.name).length);
   for(let s of waiting){ for(let w of s.wishes){ let col=COLLEGES.find(c=>c.name===w.college); if(!col) continue; if(!isEligible(col,s.marks,s.pct,s.stream).ok) continue; if(filled[col.name]<col.seats){ await setDoc(doc(db,"students",s.fid),{status:"Accepted",admittedTo:col.name},{merge:true}); filled[col.name]++; break; } } }
-  await addAudit('ADMISSION','Run 2nd Round');
+  await addAudit('ADMISSION','Run 2nd Round Admission');
 };
 window.resetAdmission=async function(){ for(let s of students) await setDoc(doc(db,"students",s.fid),{status:"Pending",admittedTo:""},{merge:true}); };
 function renderReports(){
   let byState={}, byCollege={}; students.forEach(s=>{ byState[s.state]=(byState[s.state]||0)+1; if(s.admittedTo) byCollege[s.admittedTo]=(byCollege[s.admittedTo]||0)+1; });
-  document.getElementById('reportsBox').innerHTML=`<p><b>By Stream:</b> Science ${students.filter(s=>s.stream==="Science").length} | Arts ${students.filter(s=>s.stream==="Arts").length}</p><p style="margin-top:8px"><b>By State:</b> ${Object.entries(byState).map(([k,v])=>`${k}: ${v}`).join(' | ')||'-'}</p><p style="margin-top:8px"><b>Admitted:</b> ${Object.entries(byCollege).map(([k,v])=>`${k.replace('School of ','')}: ${v}`).join(' | ')||'-'}</p><p style="margin-top:8px" class="small">All data is live from Firestore - any device sees same data.</p>`;
+  document.getElementById('reportsBox').innerHTML=`<p><b>By Stream:</b> Science ${students.filter(s=>s.stream==="Science").length} | Arts ${students.filter(s=>s.stream==="Arts").length}</p><p style="margin-top:8px"><b>By State:</b> ${Object.entries(byState).map(([k,v])=>`${k}: ${v}`).join(' | ')||'-'}</p><p style="margin-top:8px"><b>Admitted By College:</b> ${Object.entries(byCollege).map(([k,v])=>`${k.replace('School of ','')}: ${v}`).join(' | ')||'-'}</p>`;
 }
 window.exportCSV=function(){
-  let rows=[["Name","Seat","Stream","Gender","State","School","%","Wish1","Wish2","Wish3","Wish4","Status","AdmittedTo","Receipt"]];
+  let rows=[["Name","Seat","Stream","Gender","State","School","Percentage","Wish 1","Wish 2","Wish 3","Wish 4","Status","Admitted To","Receipt"]];
   students.forEach(s=>rows.push([s.name,s.seat,s.stream,s.gender,s.state,s.school,s.pct,s.wishes[0]?.college||'',s.wishes[1]?.college||'',s.wishes[2]?.college||'',s.wishes[3]?.college||'',s.status,s.admittedTo||'',s.receipt]));
-  let csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n'); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='UJ-Admissions-V8-Firebase.csv'; a.click();
+  let csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n'); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='UJ-Admissions-V8.csv'; a.click();
 };
 </script>
 </body>

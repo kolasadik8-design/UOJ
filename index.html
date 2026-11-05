@@ -2,298 +2,229 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>University of Juba - Admissions Management - V7 Professional</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0B2C4A">
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-<!-- QR for Print -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<title>University of Juba - Admissions V8 + Firebase</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Arial,sans-serif}body{background:#F1F3F6;color:#0B2C4A}
-:root{--blue:#0B2C4A;--gold:#D4A017}header{background:var(--blue);color:#fff;padding:10px 0;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:10}
-.wrap{max-width:1120px;margin:auto;padding:14px}.flex{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}
-.btn{border:none;cursor:pointer;padding:9px 15px;border-radius:999px;font-weight:700;font-size:13px}.btn-gold{background:var(--gold);color:#000}.btn-dark{background:var(--blue);color:#fff}.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25)}.btn-light{background:#fff;border:1px solid #ddd;color:#333}.btn-red{background:#dc2626;color:#fff}.btn-green{background:#16a34a;color:#fff}
-.card{background:#fff;border-radius:14px;padding:16px;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:12px}
-input,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:10px;outline:none;font-size:14px}input:focus,select:focus{border-color:var(--gold)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.docBox{border:1.5px dashed #D4A017;border-radius:12px;padding:12px;text-align:center;background:#FFFBEB}.docBox img{max-width:100%;max-height:110px;border-radius:8px;margin-top:8px}
-.pctBox{background:var(--blue);color:#fff;border-radius:10px;padding:12px;display:flex;justify-content:space-between}.pctBox b{color:var(--gold);font-size:24px}
-table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:#888;font-size:11px;padding:8px}td{padding:10px 8px;border-top:1px solid #eee;vertical-align:top}
-.hidden{display:none}.badge{padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700}.live{width:8px;height:8px;background:#16a34a;border-radius:50%;display:inline-block}
-.bar{background:#eee;height:6px;border-radius:999px;overflow:hidden;margin-top:4px}.bar>div{height:100%;background:var(--gold)}.bar>div.full{background:#dc2626}
-.stat{background:#F8F9FA;border-radius:12px;padding:12px}.stat p{font-size:11px;color:#888}.stat b{font-size:22px}
-.kpi{background:#F8F9FA;border-radius:10px;padding:10px;text-align:center}.kpi p{font-size:11px;color:#888}.kpi b{font-size:13px}
-.cover{text-align:center;padding:30px 20px;background:linear-gradient(180deg,#0B2C4A,#143A5A);color:#fff;border-radius:14px;margin-bottom:12px}
-@media(max-width:700px){.grid2,.grid4{grid-template-columns:1fr}}
-@media print{body *{visibility:hidden}#printArea,#printArea *{visibility:visible}#printArea{position:absolute;left:0;top:0;width:100%}}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}body{background:#F2F3F5}
+.top{background:#0B2C4A;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}.top span{color:#D4A017;font-size:12px}
+.wrap{max-width:1100px;margin:14px auto;padding:0 12px}.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+h3{color:#0B2C4A;margin-bottom:10px}.small{font-size:12px;color:#777}
+input,select{width:100%;padding:11px;border:1.5px solid #ddd;border-radius:10px;font-size:14px}input:focus,select:focus{outline:none;border-color:#D4A017}
+.btn{border:none;border-radius:10px;padding:12px 16px;font-weight:800;cursor:pointer;font-size:14px}.btn-gold{background:#D4A017;color:#0B2C4A}.btn-navy{background:#0B2C4A;color:#fff}.btn-red{background:#D32F2F;color:#fff}.btn-green{background:#2E7D32;color:#fff}.btn-grey{background:#eee;color:#333}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.kpi div{background:#F8F9FA;border-radius:12px;padding:14px;text-align:center}.kpi b{font-size:22px;color:#0B2C4A}.kpi p{font-size:11px;color:#777}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid #eee;text-align:left}th{background:#0B2C4A;color:#fff}
+.badge{padding:4px 8px;border-radius:20px;font-size:11px;font-weight:800}.Accepted{background:#C8E6C9}.Waiting{background:#FFF9C4}.Confirmed{background:#BBDEFB}.NotAdmitted{background:#FFCDD2}
+.hidden{display:none}.chip{display:inline-block;background:#FFF8E1;border:1px solid #D4A017;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:800;margin:2px}
+.sync{font-size:11px;padding:4px 10px;border-radius:20px;background:#E8F5E9;color:#2E7D32;font-weight:800}
+@media(max-width:700px){.grid2,.grid3,.kpi{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
-<header><div class="wrap flex between"><div class="flex"><span id="logoHeader"></span><div><h1 style="font-size:18px">University of Juba</h1><p style="color:var(--gold);font-size:11px;font-weight:700">ADMISSIONS MANAGEMENT • INTERNAL • V7 PRO</p><p id="whoami" style="font-size:11px;opacity:.7"></p></div></div><div class="flex" id="navBtns"></div></div></header>
+<div class="top"><div><b>UNIVERSITY OF JUBA</b><br><span>Admissions V8 + Firebase • Science / Arts • Cloud Sync</span></div><div id="topUser" style="text-align:right"></div></div>
 <div class="wrap">
-
-<!-- COVER / PRESENTATION -->
-<div id="page-cover" class="cover">
-<span id="logoCover"></span>
-<h2 style="margin:12px 0 4px">Admissions Management System</h2>
-<p style="color:var(--gold);font-weight:700">University of Juba • Est. 1975 • South Sudan</p>
-<p style="font-size:13px;opacity:.85;margin-top:10px">Internal System - Admissions Department Only<br>Academic Year 2026 / 2027 • 1450 Seats • 10 Colleges • 31 Departments</p>
-<p style="font-size:12px;margin-top:14px">Director of Admissions: ____________________ &nbsp;|&nbsp; Signature: ____________________ &nbsp;|&nbsp; Stamp</p>
-<button class="btn btn-gold" style="margin-top:16px" onclick="showPage('login')">Enter System →</button>
+<div id="loginPage" class="card" style="max-width:480px;margin:30px auto;text-align:center">
+<div style="font-size:40px">🎓</div><h3>Admissions Login</h3><p class="small">Firebase Firestore - Real Cloud Database</p><br>
+<input id="loginToken" placeholder="Enter Staff Token" style="text-align:center;text-transform:uppercase">
+<button class="btn btn-gold" onclick="doLogin()" style="width:100%;margin-top:10px" id="loginBtn">Login →</button>
+<div style="margin:14px 0;color:#999;font-size:12px">— OR —</div>
+<label class="btn btn-navy" style="display:block;cursor:pointer">🔑 Login with USB Flash Key<input type="file" id="flashKeyFile" accept=".txt,.key" onchange="loginWithFlash(event)" style="display:none"></label>
+<p class="small" style="margin-top:8px">Flash must contain: UJ-KEY.txt</p>
+<p id="loginMsg" class="small" style="color:red;margin-top:8px"></p>
+<p class="small" style="margin-top:14px;background:#F8F9FA;padding:10px;border-radius:10px">Firestore Tokens:<br><b>UJ-ADMIN-2026</b> • <b>UJ-STAFF-2026</b> • <b>UJ-FINANCE-2026</b></p>
+<p id="firebaseStatus" class="small" style="margin-top:8px">Connecting to Firebase...</p>
 </div>
 
-<!-- LOGIN -->
-<div id="page-login" class="card hidden" style="max-width:400px;margin:20px auto;text-align:center">
-<span id="logoLogin"></span><h2 style="margin:12px 0 4px">Staff Login</h2><p style="font-size:12px;color:#666">Admissions Department Only</p>
-<p style="font-size:11px;margin:10px 0"><span class="live"></span> <span id="fbStatus">Connecting...</span></p>
-<input id="loginToken" placeholder="STAFF TOKEN" style="text-align:center;font-weight:800;letter-spacing:2px;text-transform:uppercase">
-<p id="loginError" style="color:#dc2626;font-size:12px;margin:8px 0"></p>
-<button class="btn btn-dark" style="width:100%;padding:12px" onclick="doLogin()">Login</button>
-<p style="font-size:11px;color:#999;margin-top:10px">Tokens are in Firestore only. No token is stored in code.</p>
-</div>
+<div id="appPage" class="hidden">
+<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><span id="syncBadge" class="sync">● CLOUD SYNCED</span><span class="small" id="lastSync">Last sync: -</span><button class="btn btn-grey" onclick="loadStudents()" style="padding:6px 12px;font-size:12px;margin-left:auto">🔄 Refresh</button></div>
+<div class="kpi"><div><b id="kTotal">0</b><p>Total Applicants</p></div><div><b id="kScience">0</b><p>Science</p></div><div><b id="kArts">0</b><p>Arts</p></div><div><b id="kAccepted">0</b><p>Accepted</p></div></div>
+<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-gold" onclick="showTab('reg')">+ New Student</button><button class="btn btn-navy" onclick="showTab('list')">All Students</button><button class="btn btn-navy" onclick="showTab('admission')">Run Admission</button><button class="btn btn-grey" onclick="showTab('reports')">Reports</button><button class="btn btn-grey" onclick="exportCSV()">Export CSV</button><button class="btn btn-red" onclick="doLogout()" style="margin-left:auto">Logout</button></div></div>
 
-<!-- REGISTER -->
-<div id="page-apply" class="hidden"><div class="card" style="display:flex;flex-direction:column;gap:12px">
-<div class="flex between"><h2 id="formTitle">New Student Registration</h2><span class="badge" style="background:#FEF3C7">ADMISSIONS STAFF</span></div>
-<input type="hidden" id="editId">
+<div id="tab-reg" class="card">
+<h3>📝 New Student Registration</h3>
 <div class="grid2">
-<input id="fName" placeholder="Full Name *" style="grid-column:span 2">
-<input id="fIndex" placeholder="Seat Number *"><input id="fNational" placeholder="National ID *">
-<input id="fPhone" placeholder="Phone"><select id="fGender"><option value="">Gender *</option><option>Male</option><option>Female</option></select>
-<select id="fState"><option value="">State *</option><option>Central Equatoria</option><option>Eastern Equatoria</option><option>Western Equatoria</option><option>Jonglei</option><option>Unity</option><option>Upper Nile</option><option>Lakes</option><option>Warrap</option><option>Northern Bahr El Ghazal</option><option>Western Bahr El Ghazal</option><option>Abyei</option><option>Pibor</option><option>Ruweng</option></select>
-<input id="fSchool" placeholder="Secondary School *"><input id="fYear" type="number" value="2026">
-<select id="fType"><option>South Sudanese</option><option>Foreign - Sudan</option><option>Foreign - Uganda</option><option>Foreign - Kenya</option><option>Foreign - Ethiopia</option><option>Foreign - Other</option></select><select id="fProgram"><option>Bachelor Degree</option><option>Diploma</option><option>Masters</option><option>PhD</option></select>
+<input id="fName" placeholder="Full Name - as in Certificate *"><input id="fSeat" placeholder="Seat Number *">
+<input id="fPhone" placeholder="Phone"><input id="fNational" placeholder="National ID">
+<select id="fGender"><option value="">Gender *</option><option>Male</option><option>Female</option></select>
+<select id="fState"><option value="">State *</option><option>Central Equatoria</option><option>Eastern Equatoria</option><option>Western Equatoria</option><option>Jonglei</option><option>Unity</option><option>Upper Nile</option><option>Warrap</option><option>Northern Bahr el Ghazal</option><option>Western Bahr el Ghazal</option><option>Lakes</option><option>Other</option></select>
+<input id="fSchool" placeholder="Secondary School Name *"><input id="fYear" placeholder="Exam Year" value="2025">
+<select id="fStream" onchange="onStreamChange()" style="grid-column:span 2;border:2px solid #D4A017;font-weight:800"><option value="">Select Stream *</option><option value="Science">Science</option><option value="Arts">Arts / Humanities</option></select>
 </div>
-<label style="font-size:13px"><input type="checkbox" id="fScholarship" style="width:auto"> Scholarship</label>
-<label style="font-size:13px"><input type="checkbox" id="fDisability" style="width:auto"> Disability</label>
-<h3>Documents - Scan</h3><div class="grid2">
-<div class="docBox"><b>Certificate *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Scan / Upload<input type="file" accept="image/*" onchange="uploadFile(event,'cert')" style="display:none"></label><img id="img-cert" class="hidden"><p id="st-cert" style="font-size:11px"></p></div>
-<div class="docBox"><b>National ID *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Scan / Upload<input type="file" accept="image/*" onchange="uploadFile(event,'nid')" style="display:none"></label><img id="img-nid" class="hidden"><p id="st-nid" style="font-size:11px"></p></div>
-<div class="docBox"><b>Birth Certificate *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Scan / Upload<input type="file" accept="image/*" onchange="uploadFile(event,'birth')" style="display:none"></label><img id="img-birth" class="hidden"><p id="st-birth" style="font-size:11px"></p></div>
-<div class="docBox"><b>Passport Photo *</b><br><label class="btn btn-gold" style="cursor:pointer;display:inline-block;margin-top:8px">Scan / Upload<input type="file" accept="image/*" onchange="uploadFile(event,'photo')" style="display:none"></label><img id="img-photo" class="hidden"><p id="st-photo" style="font-size:11px"></p></div>
+<div id="streamInfo" style="margin:12px 0"></div>
+<h3 style="margin-top:14px">📚 Subjects & Marks</h3><p class="small">Best 5 (English + Maths compulsory) / 500</p>
+<div id="subjectsBox" class="grid2" style="margin-top:10px"><p class="small" style="grid-column:span 2;background:#FFF8E1;padding:12px;border-radius:10px">Select Stream to show subjects</p></div>
+<div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><div class="chip">Percentage: <b id="calcPct">0%</b></div><div class="chip">Total: <b id="calcTotal">0 / 500</b></div><div class="chip" id="calcElig">Eligible: -</div></div>
+<h3 style="margin-top:16px">🎯 4 Wishes</h3><div id="wishesBox"><p class="small">Select Stream first</p></div>
+<h3 style="margin-top:16px">💳 Payment</h3><div class="grid3"><select id="fPayMethod"><option>Cash</option><option>m-GURUSH</option><option>MTN MoMo</option><option>Bank Transfer</option></select><input id="fPayRef" placeholder="Payment Reference"><input id="fPayAmount" placeholder="Amount SSP" value="50000"></div>
+<button class="btn btn-gold" onclick="submitApp()" style="width:100%;margin-top:14px" id="saveBtn">✅ Register Student & Print Receipt</button>
+<p id="regMsg" class="small" style="margin-top:8px"></p>
 </div>
-<h3>SSCSE Results</h3><div class="grid2" id="subjectsBox"></div>
-<div class="pctBox"><span>Percentage (Best 5 incl. English & Maths)</span><b id="calcPct">0%</b></div><p id="eligibilityBox" style="font-size:12px"></p>
-<h3>4 Wishes - College + Department</h3><div id="wishesBox" style="display:flex;flex-direction:column;gap:10px"></div>
-<h3>Payment - 50,000 SSP</h3><select id="fPay"><option>m-GURUSH</option><option>MTN MoMo</option><option>Bank Transfer</option><option>Cash at University</option></select><input id="fPayRef" placeholder="Payment Reference *">
-<button class="btn btn-dark" style="width:100%;padding:13px" onclick="submitApp()" id="submitBtn">Register Student</button><p id="submitMsg" style="font-size:12px;text-align:center"></p>
+
+<div id="tab-list" class="card hidden"><h3>👥 All Students - From Firestore</h3>
+<div class="grid3" style="margin-bottom:10px"><input id="searchBox" placeholder="Search name / seat..." oninput="renderList()"><select id="filterStream" onchange="renderList()"><option value="">All Streams</option><option>Science</option><option>Arts</option></select><select id="filterStatus" onchange="renderList()"><option value="">All Status</option><option>Pending</option><option>Accepted</option><option>Waiting List</option><option>Confirmed</option><option>Not Admitted</option></select></div>
+<div style="overflow-x:auto"><table><thead><tr><th>Name</th><th>Stream</th><th>Seat</th><th>%</th><th>Wish 1</th><th>Status</th><th>Action</th></tr></thead><tbody id="studentsBody"></tbody></table></div></div>
+
+<div id="tab-admission" class="card hidden"><h3>🏆 Auto Admission</h3><p class="small">Stream checked first, then % and subject requirements.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px" id="collegeSeatsBox"></div>
+<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn btn-green" id="btnRunAdm" onclick="runAdmission()">▶ Run 1st Round</button><button class="btn btn-gold" onclick="runSecondRound()">🔁 Run 2nd Round</button><button class="btn btn-red" onclick="resetAdmission()">↺ Reset</button></div><div id="admResult" style="margin-top:12px"></div></div>
+
+<div id="tab-reports" class="card hidden"><h3>📊 Reports</h3><div id="reportsBox"></div></div>
 </div></div>
 
-<!-- DASHBOARD -->
-<div id="page-admin" class="hidden">
-<div class="card"><div class="flex between"><h2>Dashboard</h2><span id="roleBadge" class="badge" style="background:#FEF3C7"></span></div>
-<div class="grid4" style="margin-top:12px">
-<div class="stat"><p>Total Registered</p><b id="stTotal">0</b></div><div class="stat"><p>Accepted</p><b id="stAccepted" style="color:#16a34a">0</b></div><div class="stat"><p>Waiting List</p><b id="stWaiting" style="color:#d97706">0</b></div><div class="stat"><p>Confirmed</p><b id="stConfirmed" style="color:#2563eb">0</b></div>
-</div>
-<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-<button class="btn btn-gold" onclick="runAutoAdmission()">Run Auto Admission</button>
-<button class="btn btn-green" onclick="runSecondRound()">Run 2nd Round - Waiting List</button>
-<button class="btn btn-red" onclick="resetAdmission()">Reset</button>
-<input id="adminSearch" oninput="renderAdmin()" placeholder="Search name / index / national..." style="flex:1;min-width:180px">
-<button class="btn btn-green" onclick="exportCSV()">Export CSV</button>
-<button class="btn btn-dark" onclick="backupAll()">⬇ Backup JSON</button>
-</div>
-<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-<button class="btn btn-light" onclick="exportReport('state')">Report: By State</button>
-<button class="btn btn-light" onclick="exportReport('gender')">Report: Gender</button>
-<button class="btn btn-light" onclick="exportReport('school')">Report: By School</button>
-<button class="btn btn-light" onclick="exportReport('college')">Report: By College</button>
-<button class="btn btn-light" onclick="showPage('audit')">📋 Audit Log</button>
-</div>
-</div>
-<div class="card"><h3>Colleges & Departments</h3><div id="collegeSeats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"></div></div>
-<div class="card"><div style="overflow-x:auto"><table><thead><tr><th>Rank</th><th>Student</th><th>%</th><th>Wishes</th><th>Result</th><th>Action</th></tr></thead><tbody id="adminBody"></tbody></table></div></div>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, deleteDoc, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<!-- AUDIT LOG -->
-<div id="page-audit" class="hidden card"><div class="flex between"><h2>Audit Log - Who Did What</h2><button class="btn btn-light" onclick="showPage('admin')">← Back</button></div><div id="auditBody" style="margin-top:12px;font-size:13px;line-height:1.8"></div></div>
-
-<!-- COLLEGES -->
-<div id="page-colleges" class="hidden"><div class="card"><h2>Colleges</h2></div><div id="collegesGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"></div></div>
-<div id="page-college" class="hidden"><button class="btn btn-light" style="margin-bottom:10px" onclick="showPage('colleges')">← Back</button><div id="collegeDetail"></div></div>
-
-<!-- PRINT -->
-<div id="page-print" class="hidden card"><h2>Print</h2><div class="flex" style="margin-top:10px"><input id="printIndex" placeholder="Index Number"><button class="btn btn-dark" onclick="preparePrint()">Generate</button></div><div id="printArea" style="margin-top:16px"></div></div>
-
-<!-- VERIFY -->
-<div id="page-verify" class="hidden card" style="max-width:480px;margin:auto;text-align:center"><h2>Verify Receipt</h2><p style="font-size:12px;color:#666">Staff verification only</p><input id="verifyCode" placeholder="UJ-XXXXXX" style="text-align:center;margin-top:10px"><button class="btn btn-dark" style="width:100%;margin-top:10px" onclick="verifyQR()">Verify</button><div id="verifyOut" style="margin-top:12px"></div></div>
-
-</div>
-<script>
+// ===== REPLACE WITH YOUR PROJECT CONFIG FROM Firebase Console > Project Settings =====
 const firebaseConfig = {
-  apiKey: "AIzaSyAhkYk6HmwJNlzW7FJ52J_iavQhi3PdvSQ",
-  authDomain: "dufa-ae9f5.firebaseapp.com",
-  projectId: "dufa-ae9f5",
-  storageBucket: "dufa-ae9f5.firebasestorage.app",
-  messagingSenderId: "1017067912956",
-  appId: "1:1017067912956:web:fd28f38cc107024085e179"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
-let db=null,storage=null,useFirebase=false;
-try{firebase.initializeApp(firebaseConfig);db=firebase.firestore();storage=firebase.storage();useFirebase=true;document.getElementById('fbStatus').textContent="Connected";}catch(e){document.getElementById('fbStatus').textContent="Local Mode";}
-function UJLogo(s){return `<svg width="${s}" height="${s}" viewBox="0 0 120 120"><circle cx="60" cy="60" r="58" fill="#0B2C4A"/><circle cx="60" cy="60" r="58" fill="none" stroke="#D4A017" stroke-width="3"/><circle cx="60" cy="60" r="48" fill="#fff" stroke="#D4A017" stroke-width="1.5"/><text x="60" y="32" text-anchor="middle" font-size="8" font-weight="900" fill="#0B2C4A">UNIVERSITY OF JUBA</text><text x="60" y="98" text-anchor="middle" font-size="7" font-weight="900" fill="#D4A017">SOUTH SUDAN • 1975</text><path d="M30 68 L60 56 L90 68 L60 80 Z" fill="#2E86C1"/></svg>`}
-document.getElementById('logoHeader').innerHTML=UJLogo(52);document.getElementById('logoLogin').innerHTML=UJLogo(90);document.getElementById('logoCover').innerHTML=UJLogo(110);
-// *** V7 PRO: NO FALLBACK_TOKENS - Tokens ONLY in Firestore ***
-// Firestore collection: staff_tokens / docId = token / fields: role, canRunAdmission, canEdit, canDelete, active:true
-let currentUser=null,apps=[],docs={cert:null,nid:null,birth:null,photo:null},auditLog=JSON.parse(localStorage.getItem('uj_audit')||'[]');
+
+let db=null;
+try{ const app=initializeApp(firebaseConfig); db=getFirestore(app); document.getElementById('firebaseStatus').innerHTML='<span style="color:green">✅ Firebase Connected - Project: '+firebaseConfig.projectId+'</span>'; }
+catch(e){ document.getElementById('firebaseStatus').innerHTML='<span style="color:red">❌ Firebase not configured - Paste your firebaseConfig</span>'; }
 
 const COLLEGES=[
-{name:"School of Medicine",cut:88,seats:80,req:{Biology:85,Chemistry:85},dean:"Prof. Dr. Ajak Deng",location:"Main Campus - Medical Block",duration:"6 Years - MBBS",fee:"1,500,000 SSP / Year",about:"Doctors training. Practical at Juba Teaching Hospital.",color:"#dc2626",depts:[{name:"General Medicine",seats:60,cut:88,fee:"1,500,000 SSP"},{name:"Surgery",seats:20,cut:90,fee:"1,600,000 SSP"}]},
-{name:"School of Dentistry",cut:82,seats:40,req:{Biology:80,Chemistry:80},dean:"Dr. Sarah Achan",location:"Main Campus - Medical Block",duration:"5 Years",fee:"1,200,000 SSP / Year",about:"Dental clinic.",color:"#0891b2",depts:[{name:"General Dentistry",seats:40,cut:82,fee:"1,200,000 SSP"}]},
-{name:"School of Pharmacy",cut:80,seats:60,req:{Chemistry:78,Biology:75},dean:"Dr. Peter Kuel",location:"Main Campus - Science Block",duration:"5 Years",fee:"1,100,000 SSP / Year",about:"Pharmacy.",color:"#16a34a",depts:[{name:"General Pharmacy",seats:60,cut:80,fee:"1,100,000 SSP"}]},
-{name:"School of Engineering",cut:75,seats:120,req:{Mathematics:80,Physics:75},dean:"Eng. James Wani",location:"Main Campus - Block B",duration:"5 Years - BSc Eng",fee:"900,000 SSP / Year",about:"Civil, Electrical, Mechanical, Architecture.",color:"#d97706",depts:[{name:"Civil Engineering",seats:35,cut:75,fee:"900,000 SSP"},{name:"Electrical Engineering",seats:30,cut:75,fee:"900,000 SSP"},{name:"Mechanical Engineering",seats:30,cut:74,fee:"900,000 SSP"},{name:"Architecture",seats:25,cut:72,fee:"950,000 SSP"}]},
-{name:"School of Nursing",cut:72,seats:100,req:{Biology:70,English:65},dean:"Dr. Mary Akol",location:"Main Campus - Medical Block",duration:"4 Years",fee:"800,000 SSP / Year",about:"Nursing.",color:"#db2777",depts:[{name:"General Nursing",seats:70,cut:72,fee:"800,000 SSP"},{name:"Midwifery",seats:30,cut:70,fee:"750,000 SSP"}]},
-{name:"School of Computer Science & IT",cut:70,seats:150,req:{Mathematics:70,English:60},dean:"Dr. John Garang Jr.",location:"Main Campus - IT Block",duration:"4 Years - BSc",fee:"750,000 SSP / Year",about:"Programming, AI.",color:"#2563eb",depts:[{name:"Computer Science",seats:70,cut:70,fee:"750,000 SSP"},{name:"Information Technology",seats:50,cut:68,fee:"700,000 SSP"},{name:"Software Engineering",seats:30,cut:72,fee:"800,000 SSP"}]},
-{name:"School of Law",cut:68,seats:200,req:{English:70,History:65},dean:"Adv. Deng Chol",location:"Main Campus - Law Block",duration:"4 Years - LLB",fee:"650,000 SSP / Year",about:"Law.",color:"#7c3aed",depts:[{name:"General Law",seats:150,cut:68,fee:"650,000 SSP"},{name:"International Law",seats:50,cut:72,fee:"700,000 SSP"}]},
-{name:"School of Business & Economics",cut:62,seats:250,req:{Mathematics:60},dean:"Dr. Akol Majok",location:"Main Campus - Block A",duration:"4 Years - BBA",fee:"600,000 SSP / Year",about:"Business.",color:"#059669",depts:[{name:"Business Administration",seats:100,cut:62,fee:"600,000 SSP"},{name:"Accounting",seats:70,cut:64,fee:"650,000 SSP"},{name:"Economics",seats:50,cut:62,fee:"600,000 SSP"},{name:"Marketing",seats:30,cut:60,fee:"550,000 SSP"}]},
-{name:"School of Education",cut:55,seats:300,req:{English:55},dean:"Prof. Nyandeng A.",location:"Main Campus - Education Block",duration:"4 Years - BEd",fee:"450,000 SSP / Year",about:"Teachers.",color:"#b45309",depts:[{name:"English Education",seats:60,cut:55,fee:"450,000 SSP"},{name:"Mathematics Education",seats:60,cut:58,fee:"450,000 SSP"},{name:"Biology Education",seats:60,cut:55,fee:"450,000 SSP"},{name:"History / Geography Education",seats:60,cut:55,fee:"450,000 SSP"},{name:"Primary Education",seats:60,cut:52,fee:"400,000 SSP"}]},
-{name:"School of Agriculture",cut:55,seats:150,req:{Biology:55,Chemistry:50},dean:"Dr. Malith Dut",location:"Gudele Campus - Farm",duration:"4 Years - BSc Agri",fee:"500,000 SSP / Year",about:"Food security.",color:"#65a30d",depts:[{name:"Agronomy - Crop Production",seats:50,cut:55,fee:"500,000 SSP"},{name:"Animal Production",seats:40,cut:55,fee:"500,000 SSP"},{name:"Agricultural Engineering",seats:30,cut:60,fee:"550,000 SSP"},{name:"Food Science",seats:30,cut:58,fee:"550,000 SSP"}]},
+  {name:"School of Medicine",stream:"Science",cut:88,seats:80,req:{Biology:85,Chemistry:85,"English Language":75},depts:[{name:"General Medicine",seats:80,cut:88,stream:"Science"}]},
+  {name:"School of Dentistry",stream:"Science",cut:82,seats:40,req:{Biology:80,Chemistry:80},depts:[{name:"General Dentistry",seats:40,cut:82,stream:"Science"}]},
+  {name:"School of Pharmacy",stream:"Science",cut:80,seats:60,req:{Chemistry:78,Biology:75},depts:[{name:"Pharmacy",seats:60,cut:80,stream:"Science"}]},
+  {name:"School of Engineering",stream:"Science",cut:75,seats:120,req:{Mathematics:80,Physics:75},depts:[{name:"Civil Engineering",seats:40,cut:75,stream:"Science"},{name:"Electrical Engineering",seats:40,cut:75,stream:"Science"},{name:"Mechanical Engineering",seats:40,cut:75,stream:"Science"}]},
+  {name:"School of Nursing",stream:"Science",cut:72,seats:100,req:{Biology:70,"English Language":65},depts:[{name:"General Nursing",seats:100,cut:72,stream:"Science"}]},
+  {name:"School of Computer Science & IT",stream:"Science",cut:70,seats:150,req:{Mathematics:70,"English Language":60},depts:[{name:"Computer Science",seats:80,cut:70,stream:"Science"},{name:"Information Technology",seats:70,cut:70,stream:"Science"}]},
+  {name:"School of Agriculture",stream:"Science",cut:55,seats:150,req:{Biology:55,Chemistry:50},depts:[{name:"Agriculture",seats:150,cut:55,stream:"Science"}]},
+  {name:"School of Law",stream:"Arts",cut:68,seats:200,req:{"English Language":70,History:65,Geography:60},depts:[{name:"Law",seats:200,cut:68,stream:"Arts"}]},
+  {name:"School of Business & Economics",stream:"Both",cut:62,seats:250,req:{Mathematics:60,"English Language":60},depts:[{name:"Accounting",seats:80,cut:62,stream:"Both"},{name:"Business Administration",seats:90,cut:62,stream:"Both"},{name:"Economics",seats:80,cut:62,stream:"Both"}]},
+  {name:"School of Education",stream:"Both",cut:55,seats:300,req:{"English Language":55},depts:[{name:"Mathematics Education",seats:60,cut:58,stream:"Science"},{name:"Biology Education",seats:60,cut:55,stream:"Science"},{name:"English Education",seats:60,cut:55,stream:"Arts"},{name:"History / Geography Education",seats:60,cut:55,stream:"Arts"},{name:"Primary Education",seats:60,cut:52,stream:"Both"}]}
 ];
-const SUBJECTS=["English Language","Mathematics","Physics","Chemistry","Biology","Geography","History","Christian Religious Education"];
-function genReceipt(){return "UJ-"+Math.floor(100000+Math.random()*900000);}
+const SCIENCE=["English Language","Mathematics","Physics","Chemistry","Biology"];
+const ARTS=["English Language","Mathematics","Geography","History","Christian Religious Education","Commerce"];
+let students=[], currentUser=null, currentToken="";
 
-// *** 1. AUDIT LOG ***
-async function addAudit(action, detail){
-  let e={time:new Date().toLocaleString(), user:currentUser?currentUser.token+' ('+currentUser.role+')':'SYSTEM', action, detail};
-  auditLog.unshift(e); auditLog=auditLog.slice(0,500);
-  localStorage.setItem('uj_audit',JSON.stringify(auditLog));
-  if(useFirebase && firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){ try{ await db.collection("audit_log").add({...e,createdAt:Date.now()}); }catch(err){} }
-}
-function renderAudit(){
-  document.getElementById('auditBody').innerHTML = auditLog.map(a=>`<div style="border-bottom:1px solid #eee;padding:6px 0"><b>${a.time}</b> - <b>${a.user}</b> - ${a.action} - ${a.detail}</div>`).join('') || 'No logs yet';
-}
+window.doLogin=async function(){
+  let tok=document.getElementById('loginToken').value.trim().toUpperCase();
+  if(!tok) return alert("Enter Token");
+  document.getElementById('loginBtn').innerText="Checking Firestore..."; document.getElementById('loginBtn').disabled=true;
+  try{
+    if(!db) throw new Error("Firebase not configured");
+    const snap=await getDoc(doc(db,"staff_tokens",tok));
+    if(!snap.exists()){ document.getElementById('loginMsg').innerText="Invalid Token - Token not found in Firestore"; document.getElementById('loginBtn').innerText="Login →"; document.getElementById('loginBtn').disabled=false; return; }
+    const u=snap.data();
+    if(u.active===false){ document.getElementById('loginMsg').innerText="Token Disabled - Contact Admin"; document.getElementById('loginBtn').innerText="Login →"; document.getElementById('loginBtn').disabled=false; return; }
+    currentUser=u; currentToken=tok;
+    document.getElementById('loginPage').classList.add('hidden'); document.getElementById('appPage').classList.remove('hidden');
+    document.getElementById('topUser').innerHTML=`<b style="font-size:13px">${u.name} - ${u.role}</b><br><span style="font-size:11px">Token: ${tok} • Firestore</span>`;
+    if(!u.canRunAdmission) document.getElementById('btnRunAdm').style.display='none';
+    await addAudit('LOGIN','Login with token '+tok);
+    startRealtime(); await loadStudents(); showTab('reg');
+  }catch(e){ document.getElementById('loginMsg').innerText="Error: "+e.message; document.getElementById('loginBtn').innerText="Login →"; document.getElementById('loginBtn').disabled=false; }
+};
+window.loginWithFlash=async function(e){
+  let f=e.target.files[0]; if(!f) return;
+  if(f.name!=="UJ-KEY.txt" && f.name!=="UJ-KEY.key") return alert("Wrong file - Must be UJ-KEY.txt");
+  let tok=(await f.text()).trim().toUpperCase(); document.getElementById('loginToken').value=tok; e.target.value=""; window.doLogin();
+};
+window.doLogout=function(){ location.reload(); };
+async function addAudit(action,detail){ if(!db) return; try{ await addDoc(collection(db,"audit_logs"),{action,detail,by:currentUser?currentUser.name:'-',token:currentToken,createdAt:serverTimestamp()}); }catch(e){} }
 
-// *** 2. BACKUP ***
-function backupAll(){
-  let data={exportedAt:new Date().toISOString(), exportedBy:currentUser?.token, total:apps.length, applications:apps, auditLog:auditLog.slice(0,200)};
-  let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='UJ-Backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click();
-  addAudit('BACKUP','Exported '+apps.length+' students');
-  alert('Backup downloaded - Keep it safe');
+function startRealtime(){
+  if(!db) return;
+  onSnapshot(collection(db,"students"),(snap)=>{ students=snap.docs.map(d=>({fid:d.id,...d.data()})); updateSync(); renderAll(); });
 }
+function updateSync(){ document.getElementById('lastSync').innerText="Last sync: "+new Date().toLocaleTimeString()+" • "+students.length+" students in Firestore"; }
+window.loadStudents=async function(){
+  if(!db) return; const snap=await getDocs(collection(db,"students")); students=snap.docs.map(d=>({fid:d.id,...d.data()})); updateSync(); renderAll();
+};
 
-// *** 3. EDIT / DELETE WITH PERMISSIONS ***
-function editStudent(id){
-  if(!currentUser || !currentUser.canEdit){ alert('Admin Only - Cannot Edit'); return; }
-  let a=apps.find(x=>x.id===id); if(!a) return;
-  goApply(); document.getElementById('editId').value=a.id; document.getElementById('formTitle').textContent='Edit Student - '+a.name;
-  document.getElementById('submitBtn').textContent='Save Changes';
-  document.getElementById('fName').value=a.name; document.getElementById('fIndex').value=a.index; document.getElementById('fNational').value=a.national;
-  document.getElementById('fPhone').value=a.phone||''; document.getElementById('fGender').value=a.gender||''; document.getElementById('fState').value=a.state||''; document.getElementById('fSchool').value=a.school||'';
-  setTimeout(()=>{ document.querySelectorAll('[data-sub]').forEach(i=>{ if(a.marks && a.marks[i.dataset.sub]) i.value=a.marks[i.dataset.sub]; }); calcPct(); },200);
-  docs={...a.docs}; addAudit('EDIT_OPEN','Opened edit for '+a.name+' ('+a.index+')');
+window.onStreamChange=function(){
+  let s=document.getElementById('fStream').value; if(!s) return;
+  let subs=s==="Science"?SCIENCE:ARTS;
+  document.getElementById('streamInfo').innerHTML=s==="Science"?`<div style="background:#E8F5E9;border:1px solid #2E7D32;padding:10px;border-radius:10px;font-size:13px">🔬 <b>Science</b> - Medicine, Dentistry, Pharmacy, Engineering, Nursing, CS, Agriculture, Business, Education</div>`:`<div style="background:#F3E5F5;border:1px solid #7B1FA2;padding:10px;border-radius:10px;font-size:13px">📚 <b>Arts</b> - Law, Business, Education - <b>Cannot apply for Medicine / Engineering</b></div>`;
+  document.getElementById('subjectsBox').innerHTML=subs.map(x=>`<label style="display:flex;justify-content:space-between;background:#F8F9FA;padding:8px;border-radius:10px;font-size:13px"><span>${x}</span><input type="number" min="0" max="100" data-sub="${x}" oninput="calcPct()" placeholder="0-100" style="width:80px;padding:6px;text-align:center"></label>`).join('');
+  renderWishes(s); calcPct();
+};
+function renderWishes(stream){
+  let allowed=COLLEGES.filter(c=>c.stream===stream||c.stream==="Both");
+  document.getElementById('wishesBox').innerHTML=[1,2,3,4].map(i=>`<div style="border:1px solid #eee;border-radius:12px;padding:10px;background:#F8F9FA;margin-bottom:8px"><p style="font-size:12px;font-weight:800">Wish ${i} - ${stream}</p><div class="grid2" style="margin-top:6px"><select id="wishCollege${i}" onchange="onCollegeChange(${i})"><option value="">Select College</option>${allowed.map(c=>`<option value="${c.name}">${c.name} - Cut ${c.cut}%</option>`).join('')}</select><select id="wishDept${i}"><option value="">Select Department</option></select></div><p id="wishMsg${i}" style="font-size:11px;margin-top:4px"></p></div>`).join('');
 }
-async function deleteStudent(id){
-  if(!currentUser || !currentUser.canDelete){ alert('Admin Only - Cannot Delete'); return; }
-  if(!confirm('Delete this student permanently?')) return;
-  let a=apps.find(x=>x.id===id);
-  apps=apps.filter(x=>x.id!==id); localStorage.setItem('uj_v7',JSON.stringify(apps));
-  if(useFirebase && firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){ try{ await db.collection("applications").doc(String(id)).delete(); }catch(e){} }
-  await addAudit('DELETE','Deleted '+ (a?a.name:'') +' ('+ (a?a.index:'') +')');
-  renderAdmin(); alert('Deleted');
-}
+window.onCollegeChange=function(i){
+  let cn=document.getElementById('wishCollege'+i).value, s=document.getElementById('fStream').value; let col=COLLEGES.find(c=>c.name===cn); let ds=document.getElementById('wishDept'+i);
+  if(!col){ ds.innerHTML='<option value="">Select Department</option>'; return; }
+  let depts=col.depts.filter(d=>d.stream===s||d.stream==="Both"); ds.innerHTML='<option value="">Select Department</option>'+depts.map(d=>`<option value="${d.name}">${d.name} - Cut ${d.cut}% - Seats ${d.seats}</option>`).join('');
+  let chk=isEligible(col,getMarks(),calcPctVal(),s); document.getElementById('wishMsg'+i).innerHTML=chk.ok?`<span style="color:green">✅ Eligible</span>`:`<span style="color:red">❌ ${chk.reason}</span>`;
+};
+function getMarks(){ let o={}; document.querySelectorAll('[data-sub]').forEach(el=>{ if(el.value!=="") o[el.getAttribute('data-sub')]=parseFloat(el.value); }); return o; }
+function calcPctVal(){ let v=getMarks(); let eng=v["English Language"]||0, math=v["Mathematics"]||0; let others=Object.entries(v).filter(([k])=>k!=="English Language"&&k!=="Mathematics").map(([,x])=>x).sort((a,b)=>b-a).slice(0,3); if(Object.keys(v).length<5) return 0; return Math.round((eng+math+others.reduce((a,b)=>a+b,0))/5*10)/10; }
+window.calcPct=function(){ let p=calcPctVal(); let v=getMarks(); document.getElementById('calcPct').innerText=p+"%"; document.getElementById('calcTotal').innerText=Math.round(p*5)+" / 500"; let s=document.getElementById('fStream').value; if(s&&p>0){ let e=COLLEGES.filter(c=>isEligible(c,v,p,s).ok).map(c=>c.name.replace('School of ','')).join(', '); document.getElementById('calcElig').innerHTML="Eligible: "+(e||"None"); } return p; };
+function isEligible(col,vals,pct,stream){ if(col.stream!=="Both"&&col.stream!==stream) return {ok:false,reason:`For ${col.stream} only - You are ${stream}`}; if(pct<col.cut) return {ok:false,reason:`Need ${col.cut}% - You have ${pct}%`}; for(let k in col.req){ let m=vals[k]||0; if(m<col.req[k]) return {ok:false,reason:`Need ${k} >= ${col.req[k]} - You have ${m}`}; } return {ok:true}; }
 
-// *** 5. CONFIRM ADMISSION ***
-async function confirmAdmission(id){
-  let a=apps.find(x=>x.id===id); if(!a) return;
-  if(a.status!=='Accepted'){ alert('Only Accepted students can be confirmed'); return; }
-  a.status='Confirmed'; a.confirmedAt=new Date().toLocaleString(); a.confirmedBy=currentUser?.token;
-  await updateAppInDB(a); await addAudit('CONFIRM','Confirmed '+a.name+' - '+a.admittedTo);
-  renderAdmin();
+window.submitApp=async function(){
+  let name=document.getElementById('fName').value.trim(), seat=document.getElementById('fSeat').value.trim(), stream=document.getElementById('fStream').value;
+  if(!name||!seat||!stream) return alert("Fill Name, Seat and Stream");
+  if(students.find(x=>x.seat===seat)) return alert("Duplicate Seat Number");
+  let vals=getMarks(); if(Object.keys(vals).length<5) return alert("Enter all 5 subjects");
+  let pct=calcPctVal(); let wishes=[]; for(let i=1;i<=4;i++){ let c=document.getElementById('wishCollege'+i).value, d=document.getElementById('wishDept'+i).value; if(c) wishes.push({college:c,dept:d}); }
+  if(!wishes.length) return alert("Select at least 1 Wish");
+  for(let w of wishes){ let col=COLLEGES.find(c=>c.name===w.college); let chk=isEligible(col,vals,pct,stream); if(!chk.ok) return alert(`Wish ${w.college}: ${chk.reason}`); }
+  document.getElementById('saveBtn').innerText="Saving to Firestore..."; document.getElementById('saveBtn').disabled=true;
+  let recNo="UJ-"+Math.floor(100000+Math.random()*899999);
+  let data={name,seat,stream,phone:document.getElementById('fPhone').value,national:document.getElementById('fNational').value,gender:document.getElementById('fGender').value,state:document.getElementById('fState').value,school:document.getElementById('fSchool').value,year:document.getElementById('fYear').value,marks:vals,pct,wishes,payMethod:document.getElementById('fPayMethod').value,payRef:document.getElementById('fPayRef').value,payAmount:document.getElementById('fPayAmount').value,receipt:recNo,status:"Pending",admittedTo:"",createdBy:currentUser.name,createdAt:serverTimestamp()};
+  try{
+    const ref=await addDoc(collection(db,"students"),data);
+    await addAudit('REGISTER',`Registered ${name} - ${stream} - ${pct}% - ${recNo}`);
+    document.getElementById('regMsg').innerHTML=`✅ Saved to Firestore! Receipt: <b>${recNo}</b> - ${name} - ${stream} - ${pct}%`;
+    printReceiptData({...data,fid:ref.id}); document.getElementById('saveBtn').innerText="✅ Register Student & Print Receipt"; document.getElementById('saveBtn').disabled=false;
+  }catch(e){ alert("Save failed: "+e.message); document.getElementById('saveBtn').innerText="✅ Register Student & Print Receipt"; document.getElementById('saveBtn').disabled=false; }
+};
+function printReceiptData(s){
+  let w=window.open('','','width=600,height=700'); w.document.write(`<div style="font-family:Arial;padding:30px;border:2px solid #0B2C4A"><h2 style="text-align:center">UNIVERSITY OF JUBA</h2><p style="text-align:center">Admissions Receipt</p><hr><p><b>Receipt:</b> ${s.receipt}</p><p><b>Name:</b> ${s.name}</p><p><b>Seat:</b> ${s.seat}</p><p><b>Stream:</b> ${s.stream}</p><p><b>Percentage:</b> ${s.pct}%</p><p><b>Wishes:</b><br>${s.wishes.map((x,i)=>`${i+1}. ${x.college} - ${x.dept}`).join('<br>')}</p><p><b>Payment:</b> ${s.payMethod} - ${s.payRef} - ${s.payAmount} SSP</p></div>`); w.print();
 }
-
-function compressImage(dataUrl){return new Promise(res=>{let img=new Image();img.onload=()=>{let c=document.createElement('canvas');let max=900;let r=Math.min(1,max/Math.max(img.width,img.height));c.width=img.width*r;c.height=img.height*r;c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',0.65));};img.src=dataUrl;});}
-async function uploadToStorage(dataUrl, path){if(!useFirebase||!storage) return dataUrl; try{let ref=storage.ref(path); await ref.putString(dataUrl,'data_url'); return await ref.getDownloadURL();}catch(e){return dataUrl;}}
-async function loadApps(){if(useFirebase&&firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){try{let s=await db.collection("applications").orderBy("createdAt","desc").get();apps=s.docs.map(d=>({id:d.id,...d.data()}));renderAdmin();return;}catch(e){}}apps=JSON.parse(localStorage.getItem('uj_v7')||localStorage.getItem('uj_v6')||'[]');renderAdmin();}
-async function saveApp(a){apps.unshift(a);localStorage.setItem('uj_v7',JSON.stringify(apps));if(useFirebase&&firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){try{let doc={...a,docs:{}};for(let k in a.docs){ if(a.docs[k]) doc.docs[k]=await uploadToStorage(a.docs[k],`applications/${a.id}/${k}.jpg`); }await db.collection("applications").doc(String(a.id)).set(doc);}catch(e){console.log(e);}}}
-async function updateAppInDB(a){localStorage.setItem('uj_v7',JSON.stringify(apps));if(useFirebase&&firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){try{await db.collection("applications").doc(String(a.id)).set({...a,docs:a.docs},{merge:true});}catch(e){}}}
-function renderNav(){let n=document.getElementById('navBtns');if(!currentUser){n.innerHTML=`<button class="btn btn-gold" onclick="showPage('login')">Staff Login</button>`;document.getElementById('whoami').textContent="Admissions Department";return;}document.getElementById('whoami').textContent=currentUser.role+" | "+currentUser.token;n.innerHTML=`<button class="btn btn-gold" onclick="showPage('admin')">Dashboard</button><button class="btn btn-ghost" onclick="showPage('colleges')">Colleges</button><button class="btn btn-ghost" onclick="goApply()">+ New Student</button><button class="btn btn-ghost" onclick="showPage('print')">Print</button><button class="btn btn-ghost" onclick="showPage('verify')">Verify</button><button class="btn btn-ghost" onclick="logout()">Logout</button>`;}
-function showPage(p){if(!currentUser&&p!=='login'&&p!=='cover')p='login';['cover','login','apply','admin','verify','colleges','college','print','audit'].forEach(x=>{let el=document.getElementById('page-'+x);if(el)el.classList.add('hidden');});let t=document.getElementById('page-'+p);if(t)t.classList.remove('hidden');if(p==='colleges')renderCollegesList();if(p==='audit')renderAudit();window.scrollTo(0,0);}
-function logout(){addAudit('LOGOUT','Logout');currentUser=null;localStorage.removeItem('uj_session_v7');renderNav();showPage('cover');}
-async function doLogin(){
-let tok=document.getElementById('loginToken').value.trim().toUpperCase();if(!tok){document.getElementById('loginError').textContent="Enter Token";return;}
-let found=null;
-if(useFirebase&&firebaseConfig.apiKey!=="PASTE_YOUR_API_KEY"){try{let d=await db.collection("staff_tokens").doc(tok).get();if(d.exists && d.data().active!==false)found=d.data();}catch(e){}}
-// NO FALLBACK - If not in Firestore, login fails
-if(found){currentUser={token:tok,role:found.role,type:'staff',canRunAdmission:!!found.canRunAdmission,canEdit:!!found.canEdit,canDelete:!!found.canDelete};localStorage.setItem('uj_session_v7',JSON.stringify(currentUser));await addAudit('LOGIN','Login success');renderNav();showPage('admin');await loadApps();return;}
-document.getElementById('loginError').textContent="Invalid Token - Contact Admin";
+window.printReceipt=function(fid){ let s=students.find(x=>x.fid===fid); if(s) printReceiptData(s); };
+window.showTab=function(t){ ['reg','list','admission','reports'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hidden',x!==t)); if(t==='list') renderList(); if(t==='reports') renderReports(); if(t==='admission') renderColleges(); };
+function renderList(){
+  let q=(document.getElementById('searchBox').value||'').toLowerCase(), fs=document.getElementById('filterStream').value, fst=document.getElementById('filterStatus').value;
+  let list=students.filter(s=>(!q||s.name.toLowerCase().includes(q)||s.seat.includes(q))&&(!fs||s.stream===fs)&&(!fst||s.status===fst));
+  document.getElementById('studentsBody').innerHTML=list.map(s=>`<tr><td>${s.name}<br><span class="small">${s.school} - ${s.state}</span></td><td><span class="badge" style="background:${s.stream==='Science'?'#C8E6C9':'#E1BEE7'}">${s.stream}</span></td><td>${s.seat}</td><td><b>${s.pct}%</b></td><td>${s.wishes[0]?.college?.replace('School of ','')||''}<br><span class="small">${s.wishes[0]?.dept||''}</span></td><td><span class="badge ${s.status.replace(' ','')}">${s.status}</span>${s.admittedTo?`<br><span class="small">${s.admittedTo}</span>`:''}</td><td><button class="btn btn-grey" onclick="printReceipt('${s.fid}')">Receipt</button> ${currentUser?.canEdit?`<button class="btn btn-navy" onclick="confirmStudent('${s.fid}')">Confirm</button>`:''} ${currentUser?.canDelete?`<button class="btn btn-red" onclick="delStudent('${s.fid}')">Del</button>`:''}</td></tr>`).join('')||'<tr><td colspan="7" style="text-align:center">No students yet - Firestore empty</td></tr>';
 }
-function goApply(){if(!currentUser||currentUser.type!=='staff'){showPage('login');return;}document.getElementById('editId').value='';document.getElementById('formTitle').textContent='New Student Registration';document.getElementById('submitBtn').textContent='Register Student';showPage('apply');renderSubjects();}
-function getMarks(){let v={};document.querySelectorAll('[data-sub]').forEach(i=>{if(i.value)v[i.dataset.sub]=Number(i.value)});return v;}
-function getPctAndCheck(){let vals=getMarks();if(!vals['English Language']||!vals['Mathematics'])return{pct:0,vals};let o=Object.entries(vals).filter(([k])=>k!=='English Language'&&k!=='Mathematics').sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[1]);if(o.length<3)return{pct:0,vals};let tot=vals['English Language']+vals['Mathematics']+o.reduce((a,b)=>a+b,0);return{pct:Number((tot/500*100).toFixed(1)),vals};}
-function isEligible(col,vals,pct){if(pct<col.cut)return{ok:false,reason:`Need ${col.cut}%`};for(let s in col.req){let m=0;if(s==="English")m=vals["English Language"]||0;else if(s==="Mathematics")m=vals["Mathematics"]||0;else m=vals[s]||0;if(m<col.req[s])return{ok:false,reason:`Need ${s} >= ${col.req[s]}`};}return{ok:true};}
-function renderSubjects(){document.getElementById('subjectsBox').innerHTML=SUBJECTS.map(s=>`<label style="display:flex;justify-content:space-between;background:#F8F9FA;padding:8px;border-radius:10px;font-size:13px"><span>${s}</span><input type="number" data-sub="${s}" oninput="calcPct()" placeholder="0-100" style="width:70px;padding:6px;text-align:center"></label>`).join('');document.getElementById('wishesBox').innerHTML=[1,2,3,4].map(i=>`<div style="border:1px solid #eee;border-radius:12px;padding:10px;background:#F8F9FA"><p style="font-size:12px;font-weight:800">Wish ${i}</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px"><select id="wishCollege${i}" onchange="onCollegeChange(${i})"><option value="">Select College</option>${COLLEGES.map(c=>`<option value="${c.name}">${c.name} - Cut ${c.cut}%</option>`).join('')}</select><select id="wishDept${i}" onchange="calcPct()"><option value="">Select Department</option></select></div><p id="wishMsg${i}" style="font-size:11px;margin-top:4px"></p></div>`).join('');}
-function onCollegeChange(i){let cn=document.getElementById('wishCollege'+i).value;let col=COLLEGES.find(c=>c.name===cn);let ds=document.getElementById('wishDept'+i);if(!col){ds.innerHTML='<option value="">Select Department</option>';return;}ds.innerHTML='<option value="">Select Department</option>'+col.depts.map(d=>`<option value="${d.name}">${d.name} - ${d.seats} Seats - Cut ${d.cut}%</option>`).join('');calcPct();}
-function calcPct(){let{pct,vals}=getPctAndCheck();document.getElementById('calcPct').textContent=pct?pct+'%':'0%';if(!pct)return 0;let el=COLLEGES.filter(c=>isEligible(c,vals,pct).ok);document.getElementById('eligibilityBox').innerHTML=`<b style="color:#16a34a">Eligible for ${el.length} colleges:</b> ${el.map(c=>c.name).join(', ')}`;[1,2,3,4].forEach(i=>{let cs=document.getElementById('wishCollege'+i);let ds=document.getElementById('wishDept'+i);let mg=document.getElementById('wishMsg'+i);if(!cs||!ds||!mg||!cs.value||!ds.value)return;let col=COLLEGES.find(c=>c.name===cs.value);let dept=col.depts.find(d=>d.name===ds.value);let chk=isEligible(col,vals,pct);if(!chk.ok){ds.style.borderColor='#dc2626';mg.textContent='Not eligible: '+chk.reason;mg.style.color='#dc2626';}else if(pct<dept.cut){ds.style.borderColor='#dc2626';mg.textContent=`Dept cut ${dept.cut}% - You have ${pct}%`;mg.style.color='#dc2626';}else{ds.style.borderColor='#16a34a';mg.textContent=`Eligible - ${dept.name} - Cut ${dept.cut}%`;mg.style.color='#16a34a';}});return pct;}
-async function uploadFile(e,t){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=async ev=>{let compressed=await compressImage(ev.target.result);docs[t]=compressed;let img=document.getElementById('img-'+t);img.src=compressed;img.classList.remove('hidden');document.getElementById('st-'+t).textContent='Scanned - Compressed';document.getElementById('st-'+t).style.color='#16a34a';};r.readAsDataURL(f);}
-async function submitApp(){
-let{pct,vals}=getPctAndCheck();let name=document.getElementById('fName').value.trim();let idx=document.getElementById('fIndex').value.trim();let nid=document.getElementById('fNational').value.trim();
-if(!name||!idx||!nid){alert('Fill Name, Seat Number, National ID');return;}
-let editId=document.getElementById('editId').value;
-if(editId){
-  let a=apps.find(x=>String(x.id)===String(editId)); if(!a) return;
-  let oldName=a.name; a.name=name; a.index=idx; a.national=nid; a.phone=document.getElementById('fPhone').value; a.gender=document.getElementById('fGender').value; a.state=document.getElementById('fState').value; a.school=document.getElementById('fSchool').value; a.pct=pct; a.marks=vals; a.docs={...docs}; a.lastEditedBy=currentUser?.token; a.lastEditedAt=new Date().toLocaleString();
-  await updateAppInDB(a); await addAudit('EDIT_SAVE','Edited '+oldName+' -> '+name+' ('+idx+')');
-  document.getElementById('submitMsg').innerHTML='<b style="color:#16a34a">Saved!</b>'; renderAdmin(); return;
+window.delStudent=async function(fid){ if(!confirm("Delete?")) return; await deleteDoc(doc(db,"students",fid)); await addAudit('DELETE','Deleted student '+fid); };
+window.confirmStudent=async function(fid){ let s=students.find(x=>x.fid===fid); if(s.status!=="Accepted") return alert("Must be Accepted first"); await setDoc(doc(db,"students",fid),{status:"Confirmed"},{merge:true}); await addAudit('CONFIRM','Confirmed '+s.name); };
+function renderAll(){
+  document.getElementById('kTotal').innerText=students.length;
+  document.getElementById('kScience').innerText=students.filter(s=>s.stream==="Science").length;
+  document.getElementById('kArts').innerText=students.filter(s=>s.stream==="Arts").length;
+  document.getElementById('kAccepted').innerText=students.filter(s=>s.status==="Accepted"||s.status==="Confirmed").length;
+  renderList(); renderColleges(); renderReports();
 }
-if(apps.some(a=>a.index===idx)){alert('Duplicate Seat Number');return;}if(apps.some(a=>a.national===nid)){alert('Duplicate National ID');return;}
-if(!docs.cert||!docs.nid||!docs.birth||!docs.photo){alert('Upload all 4 documents');return;}if(!pct){alert('Enter 5 subjects');return;}
-let wishes=[];for(let i=1;i<=4;i++){let col=document.getElementById('wishCollege'+i).value;let dept=document.getElementById('wishDept'+i).value;if(!col||!dept){alert(`Wish ${i} incomplete`);return;}let co=COLLEGES.find(c=>c.name===col);let de=co.depts.find(d=>d.name===dept);let chk=isEligible(co,vals,pct);if(!chk.ok){alert(`Wish ${i} - Not eligible: ${chk.reason}`);return;}if(pct<de.cut){alert(`Wish ${i} - Dept cut ${de.cut}%`);return;}wishes.push({college:col,dept:dept});}
-let app={id:Date.now(),receipt:genReceipt(),name,index:idx,national:nid,phone:document.getElementById('fPhone').value,gender:document.getElementById('fGender').value,state:document.getElementById('fState').value,school:document.getElementById('fSchool').value,year:document.getElementById('fYear').value,type:document.getElementById('fType').value,program:document.getElementById('fProgram').value,scholarship:document.getElementById('fScholarship').checked,disability:document.getElementById('fDisability').checked,pct,marks:vals,wishes,pay:document.getElementById('fPay').value,payRef:document.getElementById('fPayRef').value,docs:{...docs},status:'Pending',admittedCollege:'',admittedDept:'',admittedTo:'',date:new Date().toLocaleString(),createdAt:Date.now(),registeredBy:currentUser?currentUser.token:''};
-await saveApp(app); await addAudit('REGISTER','Registered '+app.name+' ('+app.index+') - '+app.pct+'% - Receipt '+app.receipt);
-document.getElementById('submitMsg').innerHTML=`<b style="color:#16a34a">Registered!</b> Receipt: <b>${app.receipt}</b>`;printById(app.id);}
-
-// *** 5. AUTO ADMISSION + WAITING LIST + 2ND ROUND ***
-async function runAutoAdmission(){
-if(!currentUser||!currentUser.canRunAdmission){alert('Admin Only');return;}
-let pending=[...apps].sort((a,b)=>b.pct-a.pct);let filled={};COLLEGES.forEach(c=>c.depts.forEach(d=>filled[c.name+"|"+d.name]=0));
-apps.forEach(a=>{if((a.status==='Accepted'||a.status==='Confirmed')&&a.admittedCollege)filled[a.admittedCollege+"|"+a.admittedDept]=(filled[a.admittedCollege+"|"+a.admittedDept]||0)+1;});
-for(let app of pending){if(app.status==='Accepted'||app.status==='Confirmed')continue;let assigned=null;for(let w of app.wishes){let col=COLLEGES.find(c=>c.name===w.college);if(!col)continue;let dept=col.depts.find(d=>d.name===w.dept);if(!dept)continue;let key=w.college+"|"+w.dept;if((filled[key]||0)>=dept.seats)continue;if(app.pct<dept.cut||app.pct<col.cut)continue;if(!isEligible(col,app.marks||{},app.pct).ok)continue;assigned=w;filled[key]++;break;}
-if(assigned){app.status='Accepted';app.admittedCollege=assigned.college;app.admittedDept=assigned.dept;app.admittedTo=assigned.college+" - "+assigned.dept;}else{app.status='Waiting List';app.admittedCollege='';app.admittedDept='';app.admittedTo='';}await updateAppInDB(app);}
-await addAudit('RUN_ADMISSION','Run Auto Admission - 1st Round'); await loadApps(); alert('Auto Admission Completed - Others in Waiting List');
+function renderColleges(){
+  document.getElementById('collegeSeatsBox').innerHTML=COLLEGES.map(c=>{ let acc=students.filter(s=>s.admittedTo===c.name).length; return `<div style="background:#F8F9FA;border-radius:12px;padding:12px"><b style="font-size:13px">${c.name}</b><br><span class="badge" style="background:${c.stream==='Science'?'#C8E6C9':c.stream==='Arts'?'#E1BEE7':'#FFF9C4'}">${c.stream}</span> <span class="small">Cut ${c.cut}% - Seats ${c.seats} - Filled ${acc} - Left ${c.seats-acc}</span><br><span class="small">Req: ${Object.entries(c.req).map(([k,v])=>`${k} ≥ ${v}`).join(' | ')}</span></div>`; }).join('');
 }
-async function runSecondRound(){
-if(!currentUser||!currentUser.canRunAdmission){alert('Admin Only');return;}
-if(!confirm('Run 2nd Round? This will fill empty seats from Waiting List.')) return;
-// Mark Accepted who did NOT confirm as Not Reported, free their seats
-for(let a of apps){ if(a.status==='Accepted'){ a.status='Not Reported'; a.admittedCollege=''; a.admittedDept=''; a.admittedTo=''; await updateAppInDB(a);} }
-// Now run admission again for Waiting List only
-let waiting=[...apps].filter(a=>a.status==='Waiting List').sort((a,b)=>b.pct-a.pct);
-let filled={};COLLEGES.forEach(c=>c.depts.forEach(d=>filled[c.name+"|"+d.name]=0));
-apps.forEach(a=>{if(a.status==='Confirmed'&&a.admittedCollege)filled[a.admittedCollege+"|"+a.admittedDept]=(filled[a.admittedCollege+"|"+a.admittedDept]||0)+1;});
-for(let app of waiting){let assigned=null;for(let w of app.wishes){let col=COLLEGES.find(c=>c.name===w.college);let dept=col.depts.find(d=>d.name===w.dept);let key=w.college+"|"+w.dept;if((filled[key]||0)>=dept.seats)continue;if(app.pct<dept.cut||app.pct<col.cut)continue;if(!isEligible(col,app.marks||{},app.pct).ok)continue;assigned=w;filled[key]++;break;}
-if(assigned){app.status='Accepted';app.admittedCollege=assigned.college;app.admittedDept=assigned.dept;app.admittedTo=assigned.college+" - "+assigned.dept;await updateAppInDB(app);}}
-await addAudit('RUN_2ND_ROUND','Run 2nd Round from Waiting List'); await loadApps(); alert('2nd Round Completed');
+window.runAdmission=async function(){
+  if(!currentUser?.canRunAdmission) return alert("Only Admin");
+  if(!confirm("Run 1st Round?")) return;
+  let sorted=[...students].sort((a,b)=>b.pct-a.pct); let filled={}; COLLEGES.forEach(c=>filled[c.name]=0);
+  for(let s of sorted){ let placed=false; for(let w of s.wishes){ let col=COLLEGES.find(c=>c.name===w.college); if(!col) continue; if(!isEligible(col,s.marks,s.pct,s.stream).ok) continue; if(filled[col.name]<col.seats){ await setDoc(doc(db,"students",s.fid),{status:"Accepted",admittedTo:col.name},{merge:true}); filled[col.name]++; placed=true; break; } } if(!placed) await setDoc(doc(db,"students",s.fid),{status:"Waiting List",admittedTo:""},{merge:true}); }
+  await addAudit('ADMISSION','Run 1st Round'); document.getElementById('admResult').innerHTML=`<div style="background:#E8F5E9;padding:12px;border-radius:10px">✅ 1st Round Done - Saved to Firestore</div>`;
+};
+window.runSecondRound=async function(){
+  if(!currentUser?.canRunAdmission) return alert("Only Admin");
+  let freed=students.filter(s=>s.status==="Accepted"); for(let s of freed) await setDoc(doc(db,"students",s.fid),{status:"Not Admitted",admittedTo:""},{merge:true});
+  let waiting=students.filter(s=>s.status==="Waiting List").sort((a,b)=>b.pct-a.pct); let filled={}; COLLEGES.forEach(c=>filled[c.name]=students.filter(x=>x.status==="Confirmed"&&x.admittedTo===c.name).length);
+  for(let s of waiting){ for(let w of s.wishes){ let col=COLLEGES.find(c=>c.name===w.college); if(!col) continue; if(!isEligible(col,s.marks,s.pct,s.stream).ok) continue; if(filled[col.name]<col.seats){ await setDoc(doc(db,"students",s.fid),{status:"Accepted",admittedTo:col.name},{merge:true}); filled[col.name]++; break; } } }
+  await addAudit('ADMISSION','Run 2nd Round');
+};
+window.resetAdmission=async function(){ for(let s of students) await setDoc(doc(db,"students",s.fid),{status:"Pending",admittedTo:""},{merge:true}); };
+function renderReports(){
+  let byState={}, byCollege={}; students.forEach(s=>{ byState[s.state]=(byState[s.state]||0)+1; if(s.admittedTo) byCollege[s.admittedTo]=(byCollege[s.admittedTo]||0)+1; });
+  document.getElementById('reportsBox').innerHTML=`<p><b>By Stream:</b> Science ${students.filter(s=>s.stream==="Science").length} | Arts ${students.filter(s=>s.stream==="Arts").length}</p><p style="margin-top:8px"><b>By State:</b> ${Object.entries(byState).map(([k,v])=>`${k}: ${v}`).join(' | ')||'-'}</p><p style="margin-top:8px"><b>Admitted:</b> ${Object.entries(byCollege).map(([k,v])=>`${k.replace('School of ','')}: ${v}`).join(' | ')||'-'}</p><p style="margin-top:8px" class="small">All data is live from Firestore - any device sees same data.</p>`;
 }
-async function resetAdmission(){if(!currentUser||!currentUser.canRunAdmission){alert('Admin Only');return;}if(!confirm('Reset all results?'))return;for(let a of apps){a.status='Pending';a.admittedCollege='';a.admittedDept='';a.admittedTo='';await updateAppInDB(a);}await addAudit('RESET','Reset all admission results');await loadApps();}
-
-// *** 6. REPORTS ***
-function exportReport(type){
-let rows=[]; let title='';
-if(type==='state'){ title='Report_By_State'; let g={}; apps.forEach(a=>{let k=a.state||'Unknown'; g[k]=g[k]||{total:0,accepted:0,confirmed:0}; g[k].total++; if(a.status==='Accepted'||a.status==='Confirmed')g[k].accepted++; if(a.status==='Confirmed')g[k].confirmed++;}); rows=Object.entries(g).map(([k,v])=>`${k},${v.total},${v.accepted},${v.confirmed}`); rows.unshift('State,Total,Accepted,Confirmed'); }
-if(type==='gender'){ title='Report_By_Gender'; let g={}; apps.forEach(a=>{let k=a.gender||'Unknown'; g[k]=g[k]||{total:0,accepted:0}; g[k].total++; if(a.status==='Accepted'||a.status==='Confirmed')g[k].accepted++;}); rows=Object.entries(g).map(([k,v])=>`${k},${v.total},${v.accepted}`); rows.unshift('Gender,Total,Accepted'); }
-if(type==='school'){ title='Report_By_School'; let g={}; apps.forEach(a=>{let k=a.school||'Unknown'; g[k]=g[k]||{total:0,accepted:0}; g[k].total++; if(a.status==='Accepted'||a.status==='Confirmed')g[k].accepted++;}); rows=Object.entries(g).sort((a,b)=>b[1].total-a[1].total).map(([k,v])=>`"${k}",${v.total},${v.accepted}`); rows.unshift('School,Total,Accepted'); }
-if(type==='college'){ title='Report_By_College'; let g={}; COLLEGES.forEach(c=>{ g[c.name]={total:0,accepted:0}; }); apps.forEach(a=>{ if(a.admittedCollege) g[a.admittedCollege].accepted++; }); rows=Object.entries(g).map(([k,v])=>`"${k}",${v.accepted}`); rows.unshift('College,Accepted'); }
-let blob=new Blob([rows.join('\n')],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=title+'.csv'; a.click(); addAudit('REPORT','Exported '+title);
-}
-
-function renderAdmin(){let q=(document.getElementById('adminSearch')?.value||'').toLowerCase();let sorted=[...apps].sort((a,b)=>b.pct-a.pct);let list=sorted.filter(a=>(a.name+' '+a.index+' '+a.national).toLowerCase().includes(q));document.getElementById('stTotal').textContent=apps.length;document.getElementById('stAccepted').textContent=apps.filter(a=>a.status==='Accepted').length;document.getElementById('stWaiting').textContent=apps.filter(a=>a.status==='Waiting List').length;document.getElementById('stConfirmed').textContent=apps.filter(a=>a.status==='Confirmed').length;document.getElementById('collegeSeats').innerHTML=COLLEGES.map(c=>{let tf=c.depts.reduce((s,d)=>s+apps.filter(a=>(a.admittedCollege===c.name&&a.admittedDept===d.name)&&(a.status==='Accepted'||a.status==='Confirmed')).length,0);return `<div style="background:#fff;border:1px solid #eee;border-radius:12px;padding:10px"><div class="flex between"><b style="font-size:13px">${c.name}</b><span style="font-size:12px;font-weight:800">${tf}/${c.seats}</span></div>${c.depts.map(d=>{let f=apps.filter(a=>a.admittedCollege===c.name&&a.admittedDept===d.name&&(a.status==='Accepted'||a.status==='Confirmed')).length;let perc=Math.round(f/d.seats*100);return `<div style="font-size:11px;margin-top:8px;display:flex;justify-content:space-between"><span>${d.name} - Cut ${d.cut}%</span><span>${f}/${d.seats}</span></div><div class="bar"><div style="width:${perc}%" class="${perc>=100?'full':''}"></div></div>`;}).join('')}</div>`;}).join('');document.getElementById('adminBody').innerHTML=list.map((a,i)=>`<tr><td><b>#${i+1}</b></td><td><b>${a.name}</b><br><span style="font-size:11px">${a.index} | ${a.state} | ${a.gender||''}</span><br><img src="${a.docs?.photo||''}" style="width:32px;height:32px;object-fit:cover;border-radius:6px"></td><td><b>${a.pct}%</b></td><td style="font-size:11px;line-height:1.6">${(a.wishes||[]).map((w,j)=>`${j+1}. ${w.college} → <b>${w.dept}</b>`).join('<br>')}</td><td><span class="badge" style="background:${a.status==='Accepted'||a.status==='Confirmed'?'#dcfce7':a.status==='Waiting List'?'#fef3c7':'#fee2e2'}">${a.status}</span><br><b style="color:#16a34a;font-size:11px">${a.admittedTo||''}</b></td><td style="white-space:nowrap"><button onclick="printById(${a.id})" style="background:#0B2C4A;color:#fff;border:none;padding:5px 10px;border-radius:999px">Print</button> ${a.status==='Accepted'?`<button onclick="confirmAdmission(${a.id})" style="background:#16a34a;color:#fff;border:none;padding:5px 10px;border-radius:999px">Confirm</button>`:''} ${currentUser?.canEdit?`<button onclick="editStudent(${a.id})" style="background:#D4A017;border:none;padding:5px 10px;border-radius:999px">Edit</button>`:''} ${currentUser?.canDelete?`<button onclick="deleteStudent(${a.id})" style="background:#dc2626;color:#fff;border:none;padding:5px 10px;border-radius:999px">Del</button>`:''}</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999;padding:20px">No applications</td></tr>';}
-function renderCollegesList(){document.getElementById('collegesGrid').innerHTML=COLLEGES.map(c=>{let filled=c.depts.reduce((s,d)=>s+apps.filter(a=>a.admittedCollege===c.name&&a.admittedDept===d.name&&(a.status==='Accepted'||a.status==='Confirmed')).length,0);let perc=Math.round(filled/c.seats*100);return `<div class="card" style="cursor:pointer;border-top:4px solid ${c.color}" onclick="openCollege('${c.name}')"><div class="flex between"><h3 style="font-size:15px">${c.name}</h3><span class="badge" style="background:#FEF3C7">Cut ${c.cut}%</span></div><p style="font-size:12px;color:#666;margin:6px 0">${c.about}</p><p style="font-size:12px"><b>Dean:</b> ${c.dean} | ${c.duration}</p><p style="font-size:12px">Seats: ${filled}/${c.seats} | Fee: ${c.fee}</p><div class="bar"><div style="width:${perc}%"></div></div><button class="btn btn-dark" style="width:100%;margin-top:10px">View</button></div>`;}).join('');}
-function openCollege(name){let c=COLLEGES.find(x=>x.name===name);if(!c)return;showPage('college');let ft=c.depts.reduce((s,d)=>s+apps.filter(a=>a.admittedCollege===c.name&&a.admittedDept===d.name&&(a.status==='Accepted'||a.status==='Confirmed')).length,0);let top=[...apps].filter(a=>a.admittedCollege===c.name).sort((a,b)=>b.pct-a.pct).slice(0,5);let topHtml=top.length?top.map((a,i)=>`<p style="font-size:13px;padding:6px 0;border-bottom:1px solid #eee"><b>#${i+1}</b> ${a.name} - ${a.pct}% - ${a.admittedDept} - ${a.status}</p>`).join(''):'<p style="font-size:12px;color:#999">No admissions yet</p>';document.getElementById('collegeDetail').innerHTML=`<div class="card" style="border-top:6px solid ${c.color}"><div class="flex between"><div><h2>${c.name}</h2><p style="font-size:12px;color:#666">${c.location} • ${c.duration}</p></div><span class="badge" style="background:${c.color};color:#fff">Cut ${c.cut}%</span></div><p style="font-size:13px;line-height:1.7;margin:12px 0">${c.about}</p><h3 style="margin:16px 0 8px">Departments</h3>${c.depts.map(d=>{let f=apps.filter(a=>a.admittedCollege===c.name&&a.admittedDept===d.name&&(a.status==='Accepted'||a.status==='Confirmed')).length;let left=d.seats-f;let perc=Math.round(f/d.seats*100);return `<div style="border:1px solid #eee;border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><b>${d.name}</b><p style="font-size:11px">Cut: <b>${d.cut}%</b> | Fee: <b>${d.fee}</b> | Seats: <b>${f}/${d.seats}</b> - ${left} left</p><div class="bar" style="width:200px"><div style="width:${perc}%"></div></div></div><button class="btn btn-gold" onclick="applyToCollege('${c.name}','${d.name}')">Register →</button></div>`;}).join('')}</div><div class="card"><h3>Top Admitted</h3><div>${topHtml}</div></div>`;}
-function applyToCollege(collegeName,deptName){goApply();setTimeout(()=>{let sel=document.getElementById('wishCollege1');if(sel){sel.value=collegeName;onCollegeChange(1);setTimeout(()=>{if(deptName)document.getElementById('wishDept1').value=deptName;calcPct();},100);}window.scrollTo(0,0);},100);}
-function verifyQR(){let code=document.getElementById('verifyCode').value.trim().toUpperCase();let a=apps.find(x=>x.receipt===code);if(!a){document.getElementById('verifyOut').innerHTML='<p style="background:#fee2e2;color:#991b1b;padding:12px;border-radius:12px;font-weight:700">NOT FOUND</p>';return;}document.getElementById('verifyOut').innerHTML=`<div style="background:#dcfce7;padding:14px;border-radius:12px;text-align:left"><b>VERIFIED</b><br>${a.name} - ${a.pct}% - ${a.admittedTo||a.status} - Receipt ${a.receipt}</div>`;}
-function exportCSV(){let csv="Rank,Name,Index,NationalID,Pct,W1,W2,W3,W4,AdmittedTo,Status,Receipt,State,Gender,School\n"+[...apps].sort((a,b)=>b.pct-a.pct).map((a,i)=>`${i+1},"${a.name}",${a.index},${a.national},${a.pct},"${a.wishes[0]?.college||''} - ${a.wishes[0]?.dept||''}","${a.wishes[1]?.college||''} - ${a.wishes[1]?.dept||''}","${a.wishes[2]?.college||''} - ${a.wishes[2]?.dept||''}","${a.wishes[3]?.college||''} - ${a.wishes[3]?.dept||''}","${a.admittedTo}",${a.status},${a.receipt},${a.state},${a.gender},"${a.school}"`).join('\n');let b=new Blob([csv],{type:'text/csv'});let u=URL.createObjectURL(b);let l=document.createElement('a');l.href=u;l.download='UJ-Admission.csv';l.click();}
-function preparePrint(){let idx=document.getElementById('printIndex').value.trim();let a=apps.find(x=>x.index===idx);if(!a){document.getElementById('printArea').innerHTML='Not found';return;}printById(a.id);}
-
-// *** 4. PROFESSIONAL PRINT WITH QR + STAMP ***
-function printById(id){let a=apps.find(x=>x.id===id);if(!a)return;showPage('print');let serial='UJ-'+String(a.id).slice(-6)+'-'+a.receipt;
-document.getElementById('printArea').innerHTML=`<div style="border:3px solid #0B2C4A;border-radius:16px;padding:20px;max-width:620px;margin:auto;background:#fff;position:relative"><div style="display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #D4A017;padding-bottom:12px">${UJLogo(70)}<div style="text-align:right"><h2>University of Juba</h2><p style="font-size:11px;color:#D4A017;font-weight:800">${a.status==='Accepted'||a.status==='Confirmed'?'ADMISSION LETTER':'OFFICIAL RECEIPT'}</p><p style="font-size:11px">Serial: <b>${serial}</b></p></div></div><div style="display:flex;gap:14px;margin-top:14px"><img src="${a.docs?.photo||''}" style="width:90px;height:110px;object-fit:cover;border:2px solid #D4A017;border-radius:10px"><div style="flex:1;font-size:13px;line-height:1.8"><p><b>${a.name}</b></p><p>Seat: <b>${a.index}</b> | NID: <b>${a.national}</b> | ${a.pct}%</p><p>${a.state} | ${a.school} | ${a.gender||''}</p></div><canvas id="qrCanvas" width="90" height="90" style="border:1px solid #eee"></canvas></div><div style="background:#F8F9FA;border-radius:12px;padding:12px;margin-top:12px;font-size:13px;line-height:1.8"><p><b>Wishes:</b><br>${(a.wishes||[]).map((w,i)=>`${i+1}. ${w.college} → ${w.dept}`).join('<br>')}</p><p><b>Result:</b> <span style="color:#16a34a;font-weight:900">${a.status==='Accepted'||a.status==='Confirmed'?a.admittedTo:a.status}</span></p><p>Receipt: ${a.receipt} | ${a.pay} - ${a.payRef||''} | Registered by: ${a.registeredBy||''} | Date: ${a.date}</p></div><div style="display:flex;justify-content:space-between;margin-top:18px;font-size:12px;text-align:center"><div>___________________<br>Director of Admissions<br>Signature</div><div style="border:2px solid #D4A017;border-radius:50%;width:90px;height:90px;display:flex;align-items:center;justify-content:center;color:#0B2C4A;font-weight:900;font-size:11px;text-align:center">UNIVERSITY<br>OF JUBA<br>STAMP</div><div>___________________<br>Registrar<br>Date</div></div></div><div style="text-align:center;margin-top:12px"><button onclick="window.print()" style="background:#0B2C4A;color:#fff;border:none;padding:12px 24px;border-radius:999px;font-weight:800">PRINT</button></div>`;
-setTimeout(()=>{ try{ QRCode.toCanvas(document.getElementById('qrCanvas'), 'VERIFY:'+a.receipt+'|'+a.name+'|'+a.pct+'%|'+a.admittedTo, {width:90}); }catch(e){} },100);
-}
-if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }); }
-renderSubjects();loadApps();renderNav();
-let saved=localStorage.getItem('uj_session_v7');if(saved){try{currentUser=JSON.parse(saved);renderNav();showPage('admin');}catch(e){}} else { showPage('cover'); }
+window.exportCSV=function(){
+  let rows=[["Name","Seat","Stream","Gender","State","School","%","Wish1","Wish2","Wish3","Wish4","Status","AdmittedTo","Receipt"]];
+  students.forEach(s=>rows.push([s.name,s.seat,s.stream,s.gender,s.state,s.school,s.pct,s.wishes[0]?.college||'',s.wishes[1]?.college||'',s.wishes[2]?.college||'',s.wishes[3]?.college||'',s.status,s.admittedTo||'',s.receipt]));
+  let csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n'); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='UJ-Admissions-V8-Firebase.csv'; a.click();
+};
 </script>
 </body>
   </html>
